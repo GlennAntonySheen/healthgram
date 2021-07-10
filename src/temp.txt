@@ -68,12 +68,3 @@
 //   );
 // }
 
-/*
-brucoš
-fuksi
-frisser
-boboc
-taze
-segar
-
-*/
