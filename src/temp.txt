@@ -1,0 +1,81 @@
+
+                        <input type="text" {...register ("name", { required: "Please enter your name" })}   onChange={(e) => setNameElemt(e.target.value)}/>
+
+
+<form action="" id="Form1">
+                <h3>CREATE ACCOUNT</h3>
+                <Input type="text" placeholder="Email" />
+                <Input type="password" placeholder="Password" />            
+                <Input type="password" placeholder="Confirm Password" />
+
+                {/* <div class="btn-box">
+                    <button type="button" id="Next1">Next</button>
+                </div> */}
+            </form>
+        
+            <form action="" id="Form2">
+                <h3>SOCIAL LINKS</h3>
+                <Input type="text" placeholder="Medium" />
+                <Input type="text" placeholder="Github" />            
+                <Input type="text" placeholder="Linkedin" />
+
+                {/* <div class="btn-box">
+                    <button type="button" id="Back1">Back</button>
+                    <button type="button" id="Next2">Next</button>
+                </div> */}
+            </form>
+            
+            <form action="" id="Form3">
+                <h3>PERSONAL INFO</h3>
+                <Input type="text" placeholder="First Name" />
+                <Input type="text" placeholder="Last Name" />            
+                <Input type="text" placeholder="Mobile No." />
+
+                {/* <div class="btn-box">
+                    <button type="button" id="Back2">Back</button>
+                    <button type="button">Subit</button>
+                </div> */}
+            </form> 
+
+
+
+// import React, { useContext } from "react";
+// import { BoldLink, BoxContainer, FormContainer, Input, MutedLink, SubmitButton, } from "./common";
+// import { Marginer } from "../../components/marginer";
+// import { AccountContext } from "./accountContext";
+
+// export function LoginForm(props) {
+//   const { switchToSignup } = useContext(AccountContext);
+
+//   return (
+//     <BoxContainer>
+//       <FormContainer>
+//         <Input type="email" placeholder="Email" />
+//         <Input type="password" placeholder="Password" />
+//       </FormContainer>
+//       <Marginer direction="vertical" margin={10} />
+//       <MutedLink href="#">Forget your password?</MutedLink>
+//       <Marginer direction="vertical" margin="1.6em" />
+//       <SubmitButton type="submit">Signin</SubmitButton>
+//       <Marginer direction="vertical" margin="1em" />
+//       <MutedLink href="#">
+//         Don't have an accoun?{" "}
+//         <BoldLink href="#" onClick={switchToSignup}>
+//           Signup
+//         </BoldLink>
+//       </MutedLink>
+//     </BoxContainer>
+//   );
+// }
+
+/*
+brucoš
+fuksi
+frisser
+boboc
+taze
+segar
+
+
+
+*/
