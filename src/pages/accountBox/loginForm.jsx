@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { FormContainer, Form, Button, ShowPaswd, ErrorText } from "./common";
 import { TextField } from "@material-ui/core";
@@ -11,9 +12,42 @@ export function LoginInForm (props) {
         handleSubmit,
         formState: { errors, isValid }
     } = useForm({ mode: "all", reValidateMode: "all" });   
+    const history = useHistory();
     const [showpswd, setShowpswd] = useState(true);
+    const [loginErrorText, setLoginErrorText] = useState('')
 
-    const onSubmit = data => alert(JSON.stringify(data));
+    useEffect(()=>{
+        
+        // console.log(`userbaseTable is: ${JSON.stringify(userbaseTable)}`);
+    },[])
+
+    const OnSubmit = async data => {
+        // console.log(data)
+        let response= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`SELECT * FROM userbase WHERE Username="${data.email}";`})
+        });
+        let userbaseTable = await response.json();
+        console.log(userbaseTable);
+
+        if (userbaseTable.length == 0 || userbaseTable[0].Password != data.password) {
+            setLoginErrorText('Your Username Or Password Is Invalid.');
+        } else if (userbaseTable[0].User_Status == 'not verified') {
+            setLoginErrorText('Your Details Are Yet To Be Verified, You Will Be Notified When Its Completed.');
+        } else {
+            sessionStorage.setItem('Username', userbaseTable[0].Username);
+            if (userbaseTable[0].User_Type == 'admin') {
+                history.push('./admin');
+            } else if (userbaseTable[0].User_Type == 'doctor') {
+                history.push('./doctor');
+            } else if (userbaseTable[0].User_Type == 'patient') {
+                history.push('./patient');
+            }
+            setLoginErrorText('');
+            console.log('loged in successfully');
+        }        
+    };
     
     const fieldStyles = {
         marginTop: '20px'
@@ -21,7 +55,7 @@ export function LoginInForm (props) {
 
     return <>
         <FormContainer style={{ height: '190px', marginTop: '20px'}}>
-            <Form onSubmit={handleSubmit(onSubmit)} action="connect.php" method="post">
+            <Form onSubmit={handleSubmit(OnSubmit)}>
                 <TextField
                     name="email"
                     label="E-mail*"
@@ -43,7 +77,7 @@ export function LoginInForm (props) {
                     size="small"
                     style={fieldStyles}
                     {...register("password", { 
-                        required: "Please Enter A Password"
+                        required: "Please Enter Your Password"
                     })}
                 />
                 <ShowPaswd>
@@ -56,10 +90,13 @@ export function LoginInForm (props) {
                     <p>Show Password</p>
                 </ShowPaswd>                    
                 {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
+
+                
             </Form>
         </FormContainer>
-        <Button type="submit" value="Submit" disable={true}>Log in</Button>
-        {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
+        <Button type="submit" onClick={() =>handleSubmit(OnSubmit)()}disable={isValid}>Log in</Button>
+        <ErrorText>{loginErrorText}</ErrorText>
+        <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </>;
 }
 

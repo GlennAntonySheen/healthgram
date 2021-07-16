@@ -84,9 +84,7 @@ const AccessibilityItem = styled(Link)`
 `;
 
 export function Navbar(props) {
-    var test={
-        databases:['sdfsd','sdfsdf','sdfsd']
-    };
+
     useEffect(()=>{
     //  fetch("http://localhost/healthgram/test.php",{
     //      method: "GET",
@@ -96,12 +94,12 @@ export function Navbar(props) {
     //  })
     //  .then(data=>data.json())
     //  .then(jsondata=>console.log(jsondata));
-    fetch("http://localhost/healthgram/test.php",{
-        method:"POST",
-        body:JSON.stringify({"name":"alvin"}),
-        header:{"Content-Type": "application/json"},
-    }).then(data=>data.json())
-     .then(jsondata=>console.log(jsondata));
+        fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":"SELECT * FROM test_table;"})
+        }).then(data=>data.json())
+        .then(jsondata=>console.log(jsondata));
     },[])
     return <Wrapper>
         <LeftSection><Logo></Logo></LeftSection>

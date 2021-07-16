@@ -28,8 +28,6 @@ export function DoctorRegistrationForm (props) {
 
     const [showpswd, setShowpswd] = useState(true);
 
-    const onSubmit = data => alert(JSON.stringify(data));
-
     const fieldStyles = {
         marginTop: '15px'
     }
@@ -119,6 +117,17 @@ export function DoctorRegistrationForm (props) {
             document.getElementById('Page4').style.left = "450px";
             document.getElementById('Page3').style.left = "0px";
         }
+    }
+
+    const onSubmit = async data => {
+        let response= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`SELECT * FROM userbase WHERE Username="${data.email}";`})
+        });
+        let userbaseTable = await response.json();
+        console.log(userbaseTable);
+        
     }
 
     return <>        

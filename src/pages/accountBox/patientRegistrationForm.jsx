@@ -25,13 +25,32 @@ export function PatientRegistrationForm (props) {
     const prevBtnRef = useRef(null); 
     const [btnDisable, setBtnDisable] = useState(false);
 
-    const onSubmit = data => alert(JSON.stringify(data));
+    const onSubmit = async data => {
+        // console.log(data);
+        const formData = new FormData();
+        for(const name in data){
+            formData.append(name,data[name]);
+            // console.log(name);
+        }
+    
+        let response= await fetch("http://localhost/healthgram/patientFormHandler.php",{
+         method:'POST',
+        //  mode: 'no-cors',
+        //  headers: {
+        //    "Content-Type": "multipart/form-data",
+        //    "Accept": "application/json",
+        //    "type": "formData"
+        //  },
+         body:formData
+        });
+        let responsetext = await response.json();
+        console.log(responsetext);
+        
+    }
 
     const fieldStyles = {
         marginTop: '15px'
     }
-
-
 
     function nextBtnHover() {
         if (page == 1) {
@@ -101,7 +120,7 @@ export function PatientRegistrationForm (props) {
                 <img src={BackArrow} id="Prev" ref={prevBtnRef} onClick={PrevBtnClick} />
                 <p>Page {page} out of 4</p>
             </PageNav>            
-            <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form onSubmit={handleSubmit(onSubmit)}  enctype="multipart/form-data">
                 <FormPage id="Page1">
                     <h3>PERSONAL INFO</h3>
                     <TextField
@@ -239,8 +258,8 @@ export function PatientRegistrationForm (props) {
                     <h3>UPLOAD DOCUMENTS</h3>
                     <h5>Upload your Driving Licence</h5>
                     <input 
-                        name="drivingLicence"
                         type="file" 
+                        name="drivingLicence"
                         label="gjjkj"
                         {...register("drivingLicence", { 
                             required: "Please Upload Your Driving Licence"
@@ -251,7 +270,8 @@ export function PatientRegistrationForm (props) {
                 </FormPage>
             </Form>
         </FormContainer>
-        {/* <button onClick={() => console.log(getValues('drivingLicence').length == 1)}>gjh</button> */}
+        <button onClick={() => console.log(getValues('drivingLicence'))}>gjh</button>
         <Button id="NextBtn" onMouseEnter={nextBtnHover} onClick={nextBtnClick} value="Next" disable={btnDisable}>{buttonText}</Button> 
+        <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </>
 }
