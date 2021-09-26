@@ -8,7 +8,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import FormControl from '@material-ui/core/FormControl';
 
-import {  FormContainer, FileUpload, ErrorText, Button, Form, PageNav, FormPage } from "./common";
+import {  FormContainer, ShowPaswd, ErrorText, Button, Form, PageNav, FormPage } from "./common";
 import BackArrow from '../../assets/icons/arrow-left-circle.svg';
 
 export function PatientRegistrationForm (props) {
@@ -19,34 +19,15 @@ export function PatientRegistrationForm (props) {
         register, 
         handleSubmit,
         getValues,
-        setValue,
         formState: { errors, isValid }
     } = useForm({ mode: "all", reValidateMode: "all" });   
     const prevBtnRef = useRef(null); 
     const [btnDisable, setBtnDisable] = useState(false);
+    const [showpswd, setShowpswd] = useState(true);
+    const [registerError, setRegisterError] = useState('');
+    const [idProofDataURL, setIdProofDataURL] = useState('')
 
-    const onSubmit = async data => {
-        // console.log(data);
-        const formData = new FormData();
-        for(const name in data){
-            formData.append(name,data[name]);
-            // console.log(name);
-        }
-    
-        let response= await fetch("http://localhost/healthgram/patientFormHandler.php",{
-         method:'POST',
-        //  mode: 'no-cors',
-        //  headers: {
-        //    "Content-Type": "multipart/form-data",
-        //    "Accept": "application/json",
-        //    "type": "formData"
-        //  },
-         body:formData
-        });
-        let responsetext = await response.json();
-        console.log(responsetext);
-        
-    }
+    const reader = new FileReader();
 
     const fieldStyles = {
         marginTop: '15px'
@@ -58,7 +39,7 @@ export function PatientRegistrationForm (props) {
                 (((!(getValues('phoneNo') === undefined || getValues('phoneNo')=="")) && (errors.phoneNo === undefined))==true) &&
                 (((!(getValues('gender') === undefined || getValues('gender')=="")) && (errors.gender === undefined))==true) &&
                 (((!(getValues('dob') === undefined || getValues('dob')=="")) && (errors.dob === undefined))==true)) {
-                console.log('trueeeee');
+                
                 setBtnDisable(true);
             } else {
                 setBtnDisable(false);
@@ -68,13 +49,21 @@ export function PatientRegistrationForm (props) {
                 (((!(getValues('street') === undefined || getValues('street')=="")) && (errors.street === undefined))==true) &&
                 (((!(getValues('district') === undefined || getValues('district')=="")) && (errors.district === undefined))==true) &&
                 (((!(getValues('pin') === undefined || getValues('pin')=="")) && (errors.pin === undefined))==true)) {
-                console.log('trueeeee');
+                
                 setBtnDisable(true);
             } else {
                 setBtnDisable(false);
             }
         } else if (page == 3) {
-            if (getValues('drivingLicence').length == 1) {
+            if ((((!(getValues('email') === undefined || getValues('email')=="")) && (errors.email === undefined))==true) &&
+                (((!(getValues('password') === undefined || getValues('password')=="")) && (errors.password === undefined))==true) &&
+                (((!(getValues('confirmPassword') === undefined || getValues('confirmPassword')=="")) && (errors.confirmPassword === undefined))==true)) {              
+                setBtnDisable(true);
+            } else {
+                setBtnDisable(false);
+            }
+        } else if (page == 4) {
+            if (getValues('idProof').length == 1) {
                 setBtnDisable(true);
             } else {
                 setBtnDisable(false);
@@ -91,10 +80,14 @@ export function PatientRegistrationForm (props) {
                 document.getElementById('Page1').style.left = "-450px";
                 document.getElementById('Page2').style.left = "0px";
             } else if (page == 2) {
-                setPage(3);     setButtonText('Register');
+                setPage(3);     
                 document.getElementById('Page2').style.left = "-450px";
                 document.getElementById('Page3').style.left = "0px";
-            } else if (page == 3 && isValid) {
+            } else if (page == 3) {
+                setPage(4);     setButtonText('Register');
+                document.getElementById('Page3').style.left = "-450px";
+                document.getElementById('Page4').style.left = "0px";
+            } else if (page == 4 && isValid) {
                 handleSubmit(onSubmit)();
             } 
         }
@@ -110,17 +103,54 @@ export function PatientRegistrationForm (props) {
             setPage(2);          setButtonText('Next');
             document.getElementById('Page3').style.left = "450px";
             document.getElementById('Page2').style.left = "0px";
+        } else if (page == 4) {
+            setPage(3);          setButtonText('Next');
+            document.getElementById('Page4').style.left = "450px";
+            document.getElementById('Page3').style.left = "0px";
+        }
+    }
+    
+    const onSubmit = async data => {
+        let response= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`SELECT * FROM tbl_userbase WHERE Username="${data.email}";`})
+        });
+        let table = await response.json();
+        console.log(table);
+
+        if (table.length == 0) {
+            setRegisterError('')
+
+            let response= await fetch("http://localhost/healthgram/test.php",{
+                method:"POST",
+                header:{"Content-Type": "application/json"},
+                body:JSON.stringify({"query":`
+                    INSERT INTO tbl_userbase(Username,Password,User_Type,User_Status) VALUES('${data.email}','${data.password}','patient','not verified');
+                    INSERT INTO tbl_patient (Pat_Id, Username, Pat_Name, Pat_Phone_No, Pat_Dob, Pat_Gender, Pat_House_No, Pat_Street, Pat_Dist, Pat_Pin, Pat_Date_Registered, Pat_Id_Proof) VALUES (NULL, '${data.email}', '${data.name}', '${data.phoneNo}', '${data.dob}', '${data.gender}', '${data.houseNo}', '${data.street}', '${data.district}', '${data.pin}', current_timestamp(), '${idProofDataURL}'); 
+                `})
+            });
+            let userbaseTable = await response.json();
+            console.log('userbaseTable: ', userbaseTable);
+
+            if (userbaseTable.length == 0) {
+                alert('Your have Registered successfully. \nPlease be patient enough till we send you a confirmation letter within 1 - 2 days.');
+            }
+        } else {
+            setRegisterError('This User Already Exist')
         }
     }
 
+    function fn() {
+    }
 
     return <>    
         <FormContainer style={{ height: '380px' }}>            
             <PageNav>
                 <img src={BackArrow} id="Prev" ref={prevBtnRef} onClick={PrevBtnClick} />
                 <p>Page {page} out of 4</p>
-            </PageNav>            
-            <Form onSubmit={handleSubmit(onSubmit)}  enctype="multipart/form-data">
+            </PageNav>         
+            <Form onSubmit={handleSubmit(onSubmit)}  >
                 <FormPage id="Page1">
                     <h3>PERSONAL INFO</h3>
                     <TextField
@@ -184,8 +214,8 @@ export function PatientRegistrationForm (props) {
                         {...register("dob", { 
                             required: "Please Enter Your Date Of Birth",
                             pattern: {
-                                value: /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[012])-(19[2-9][0-9]|200[0-5])$/,
-                                message: "Enter a valid date in the format DD-MM-YYYY (NOTE: You must be 16 years old or more"
+                                value: /^(19[2-9][0-9]|200[0-5])-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
+                                message: "Enter a valid date in the format YYYY-MM-DD (NOTE: You must be 16 years old or more"
                             }})
                         }
                     />
@@ -254,24 +284,93 @@ export function PatientRegistrationForm (props) {
                     {errors.pin && <ErrorText>{errors.pin.message}</ErrorText>}
                 </FormPage>
             
-                <FormPage id="Page3">                    
+                <FormPage id="Page3">
+                    <h3>ACCOUNT DETAILS</h3>
+                    <TextField
+                        name="email"
+                        label="E-mail*"
+                        variant="outlined"
+                        fullWidth="true"
+                        size="small"
+                        {...register("email", { 
+                            required: "Please Enter E-mail ID",
+                            pattern: {
+                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                                message: "Invalid E-mail Address"
+                            }
+                        })}
+                    />
+                    {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
+
+                    <TextField
+                        name="password"
+                        label="Password*"
+                        variant="outlined"
+                        type={showpswd ? 'password' : 'text'}
+                        fullWidth="true"
+                        size="small"
+                        style={fieldStyles}
+                        {...register("password", { 
+                            required: "Please Enter A Password",
+                            minLength: {
+                                value: 8,
+                                message: "Password Must Contain Atleast 8 Characters"                            
+                            }
+                        })}
+                    />
+                    <ShowPaswd>
+                        <Checkbox
+                            color="primary"
+                            size="small"
+                            // checked="true"
+                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                            onClick={() => setShowpswd(!showpswd)}
+                        />
+                        <p>Show Password</p>
+                    </ShowPaswd>                    
+                    {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
+                    
+                    <TextField
+                        name="confirmPassword"
+                        label="Confirm Password*"
+                        variant="outlined"
+                        type="password"
+                        fullWidth="true"
+                        size="small"
+                        style={fieldStyles}
+                        {...register("confirmPassword", { 
+                            required: "Please re-enter Password",
+                            validate: value => value === getValues('password') || "The passwords do not match"
+                        })}
+                    />
+                    {errors.confirmPassword && <ErrorText>{errors.confirmPassword.message}</ErrorText>}
+                </FormPage>
+
+                <FormPage id="Page4">                    
                     <h3>UPLOAD DOCUMENTS</h3>
-                    <h5>Upload your Driving Licence</h5>
+                    <h5>Upload your Driving Licence OR Any Proof For Your Age</h5>
                     <input 
                         type="file" 
-                        name="drivingLicence"
+                        name="idProof"
                         label="gjjkj"
-                        {...register("drivingLicence", { 
+                        {...register("idProof", { 
                             required: "Please Upload Your Driving Licence"
                         })}
+                        onChange = { () => {
+                            reader.readAsDataURL(getValues('idProof')[0]);
+                            reader.onload = (e) => {
+                                setIdProofDataURL(reader.result);
+                            }
+                        }}
                     ></input>
-                    {errors.drivingLicence && <ErrorText>{errors.drivingLicence.message}</ErrorText>}
+                    {errors.idProof && <ErrorText>{errors.idProof.message}</ErrorText>}
 
                 </FormPage>
-            </Form>
+            </Form> 
         </FormContainer>
-        <button onClick={() => console.log(getValues('drivingLicence'))}>gjh</button>
         <Button id="NextBtn" onMouseEnter={nextBtnHover} onClick={nextBtnClick} value="Next" disable={btnDisable}>{buttonText}</Button> 
-        <pre>{JSON.stringify(watch(), null, 2)}</pre>
+        <ErrorText>{registerError}</ErrorText>
+        {/* <button onClick={() => console.log(idProofDataURL)}>gjh</button> */}
+        {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
     </>
 }

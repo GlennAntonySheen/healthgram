@@ -9,7 +9,7 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     position: absolute;
-    background-color: #fff;
+    background-color: transparent;
     top: 0;
     z-index: 100;
     box-shadow: 0 1px 3px rgba(15, 15, 15, 0.13);
@@ -84,23 +84,6 @@ const AccessibilityItem = styled(Link)`
 `;
 
 export function Navbar(props) {
-
-    useEffect(()=>{
-    //  fetch("http://localhost/healthgram/test.php",{
-    //      method: "GET",
-    //      headers:{
-    //          'Accept': 'application/json'
-    //      }
-    //  })
-    //  .then(data=>data.json())
-    //  .then(jsondata=>console.log(jsondata));
-        fetch("http://localhost/healthgram/test.php",{
-            method:"POST",
-            header:{"Content-Type": "application/json"},
-            body:JSON.stringify({"query":"SELECT * FROM test_table;"})
-        }).then(data=>data.json())
-        .then(jsondata=>console.log(jsondata));
-    },[])
     return <Wrapper>
         <LeftSection><Logo></Logo></LeftSection>
         <MiddleSection></MiddleSection>

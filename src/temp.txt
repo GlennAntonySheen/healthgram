@@ -1,70 +1,37 @@
-
-                        <input type="text" {...register ("name", { required: "Please enter your name" })}   onChange={(e) => setNameElemt(e.target.value)}/>
-
-
-<form action="" id="Form1">
-                <h3>CREATE ACCOUNT</h3>
-                <Input type="text" placeholder="Email" />
-                <Input type="password" placeholder="Password" />            
-                <Input type="password" placeholder="Confirm Password" />
-
-                {/* <div class="btn-box">
-                    <button type="button" id="Next1">Next</button>
-                </div> */}
-            </form>
-        
-            <form action="" id="Form2">
-                <h3>SOCIAL LINKS</h3>
-                <Input type="text" placeholder="Medium" />
-                <Input type="text" placeholder="Github" />            
-                <Input type="text" placeholder="Linkedin" />
-
-                {/* <div class="btn-box">
-                    <button type="button" id="Back1">Back</button>
-                    <button type="button" id="Next2">Next</button>
-                </div> */}
-            </form>
-            
-            <form action="" id="Form3">
-                <h3>PERSONAL INFO</h3>
-                <Input type="text" placeholder="First Name" />
-                <Input type="text" placeholder="Last Name" />            
-                <Input type="text" placeholder="Mobile No." />
-
-                {/* <div class="btn-box">
-                    <button type="button" id="Back2">Back</button>
-                    <button type="button">Subit</button>
-                </div> */}
-            </form> 
+-- Userbase --
+CREATE TABLE `healthgram`.`tbl_userbase` ( `Username` VARCHAR(35) NOT NULL , `Password` VARCHAR(35) NOT NULL , `User_Type` VARCHAR(35) NOT NULL , `User_Status` VARCHAR(35) NOT NULL , PRIMARY KEY (`Username`)) ENGINE = InnoDB; 
+-- Userbase @ Insert --
+INSERT INTO `userbase`(`Username`, `Password`, `User_Type`, `User_Status`) VALUES ('Sincere@april.biz','Romaguera','doctor','not verified');
+-------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+-- Doctor --
+CREATE TABLE `healthgram`.`tbl_doctor` ( `Doc_Id` INT NOT NULL AUTO_INCREMENT , `Sp_Id` INT NOT NULL , `Username` VARCHAR(35) NOT NULL , `Doc_Name` VARCHAR(35) NOT NULL , `Doc_Phone_No` VARCHAR(14) NOT NULL , `Doc_Dob` DATE NOT NULL , `Doc_Gender` VARCHAR(19) NOT NULL , `Doc_House_No` VARCHAR(10) NOT NULL , `Doc_Street` VARCHAR(15) NOT NULL , `Doc_Dist` VARCHAR(15) NOT NULL , `Doc_Pin` VARCHAR(8) NOT NULL , `Doc_Date_Registered` DATETIME NOT NULL , `Doc_No_Of_Tokens` INT NOT NULL , `Doc_Fee` DECIMAL NOT NULL , `Doc_Proof` TEXT NOT NULL , `Doc_Age_Proof` TEXT NOT NULL , `Doc_Description` TEXT NOT NULL , PRIMARY KEY (`Doc_Id`)) ENGINE = InnoDB;
+/*NOTE: This
+    foreign key for Sp_Id if not added
+    Doc_Date_Registered is not timestamp
+*/
 
-// import React, { useContext } from "react";
-// import { BoldLink, BoxContainer, FormContainer, Input, MutedLink, SubmitButton, } from "./common";
-// import { Marginer } from "../../components/marginer";
-// import { AccountContext } from "./accountContext";
+---- @ Insert ----
+INSERT INTO `tbl_doctor` (`Doc_Id`, `Sp_Id`, `Username`, `Doc_Name`, `Doc_Phone_No`, `Doc_Dob`, `Doc_Gender`, `Doc_House_No`, `Doc_Street`, `Doc_Dist`, `Doc_Pin`, `Doc_Date_Registered`, `Doc_No_Of_Tokens`, `Doc_Fee`, `Doc_Proof`, `Doc_Age_Proof`, `Doc_Description`) VALUES (NULL, '2', 'sheen@gmail.com', 'Leanne Graham', '+919299853874', '1996-12-18', 'male', '556/123', 'Gwenborough', 'Kulas', '811496', '2021-07-26 01:02:40.000000', '14', '150', '', '', 'Adept medical doctor with eight solid years of practice experience. Dedicated to exemplary patient outcomes and following all necessary medical procedures with the use of the latest industry equipment and technology.')
 
-// export function LoginForm(props) {
-//   const { switchToSignup } = useContext(AccountContext);
+Adept medical doctor with eight solid years of practice experience. Dedicated to exemplary patient outcomes and following all necessary medical procedures with the use of the latest industry equipment and technology.
+-------------------------------------------------------------------------------------------------------------------------------------------------
 
-//   return (
-//     <BoxContainer>
-//       <FormContainer>
-//         <Input type="email" placeholder="Email" />
-//         <Input type="password" placeholder="Password" />
-//       </FormContainer>
-//       <Marginer direction="vertical" margin={10} />
-//       <MutedLink href="#">Forget your password?</MutedLink>
-//       <Marginer direction="vertical" margin="1.6em" />
-//       <SubmitButton type="submit">Signin</SubmitButton>
-//       <Marginer direction="vertical" margin="1em" />
-//       <MutedLink href="#">
-//         Don't have an accoun?{" "}
-//         <BoldLink href="#" onClick={switchToSignup}>
-//           Signup
-//         </BoldLink>
-//       </MutedLink>
-//     </BoxContainer>
-//   );
-// }
 
+-- Patient --
+CREATE TABLE `healthgram`.`tbl_patient` ( `Pat_Id` INT NOT NULL AUTO_INCREMENT , `Username` VARCHAR(35) NOT NULL , `Pat_Name` VARCHAR(35) NOT NULL , `Pat_Phone_No` VARCHAR(13) NOT NULL , `Pat_Dob` VARCHAR(10) NOT NULL , `Pat_Gender` VARCHAR(19) NOT NULL , `Pat_House_No` VARCHAR(35) NOT NULL , `Pat_Street` VARCHAR(35) NOT NULL , `Pat_Dist` VARCHAR(35) NOT NULL , `Pat_Pin` INT(6) NOT NULL , `Pat_Date_Registered` TIMESTAMP NOT NULL , `Pat_Id_Proof` TEXT NOT NULL , PRIMARY KEY (`Pat_Id`), FOREIGN KEY(Username) REFERENCES tbl_userbase(Username)) ENGINE = InnoDB;
+
+---- @ Insert ----
+INSERT INTO `tbl_patient` (`Pat_Id`, `Username`, `Pat_Name`, `Pat_Phone_No`, `Pat_Dob`, `Pat_Gender`, `Pat_House_No`, `Pat_Street`, `Pat_Dist`, `Pat_Pin`, `Pat_Date_Registered`, `Pat_Id_Proof`) VALUES (NULL, 'abc@gmail.com', 'abc', '+919895167005', '2000-11-11', 'male', 'jfg', 'fgjfg', 'fgjfgj', '123456', current_timestamp(), ''); 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+-- Doctor Category --
+CREATE TABLE `healthgram`. ( `Sp_Id` INT NOT NULL AUTO_INCREMENT , `Sp_Name` VARCHAR(35) NOT NULL , PRIMARY KEY (`Sp_Id`)) ENGINE = InnoDB;
+
+---- Doctor Category @ Insert ----
+INSERT INTO `doctor category` (`Sp_Id`, `Sp_Name`) VALUES (NULL, 'Cardiologist'), (NULL, 'Audiologist')
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+SELECT doctor.Username, Doc_Id, Sp_Id, Doc_Name, Doc_Phone_No, Doc_Dob, Doc_Date_Registered FROM healthgram.tbl_userbase userbase JOIN healthgram.tbl_doctor doctor On userbase.Username = doctor.Username and userbase.User_Status = 'not verified';

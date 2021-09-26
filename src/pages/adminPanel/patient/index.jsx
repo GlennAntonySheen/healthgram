@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import MaterialTable from 'material-table';
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
-import CachedIcon from '@material-ui/icons/Cached';
 import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
+import CachedIcon from '@material-ui/icons/Cached';
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 
 const ContentWrapper = styled.div`
     width: 100%;
@@ -12,7 +12,6 @@ const ContentWrapper = styled.div`
     scrollbar-width: none;
     position: relative;
     margin-left: ${ props => props.isActive ? '230px' : '98px' }; 
-    /* background-color: red; */
     transition: all 0.2s ease;
 `;
 
@@ -25,6 +24,7 @@ const RefreshButton = styled.button`
     border: none;
     scale: 1.6;
     background-color: transparent;
+    /* background-color: violet; */
 
     & :hover {
         transform: rotate(-180deg);
@@ -32,7 +32,7 @@ const RefreshButton = styled.button`
     }
 `;
 
-const NotVerifiedDoctorsPannel = styled.div`
+const NotVerifiedPatientsPannel = styled.div`
     height: auto;
     width: 100%;
     display: flex;
@@ -41,45 +41,45 @@ const NotVerifiedDoctorsPannel = styled.div`
     background-color: transparent;
 `;
 
-const AllDoctors = styled.div`
+const AllPatients = styled.div`
     width: 100%;
     margin-top: 20px;
     background-color: transparent;
 `;
 
-export default function Doctor(props) {
-    const [notVerifiedDoctors, setNotVerifiedDoctors] = useState([]);
-    const [doctorDetails, setDoctorDetails] = useState([]);
+export default function Patient(props) {
+    const [notVerifiedPatients, setNotVerifiedPatients] = useState([]);
+    const [patientDetails, setPatientDetails] = useState([]);
     const [loadForFirstTime, setLoadForFirstTime] = useState(true);
 
 
-    const getUnverifiedDoctors = async () => {
+    const getUnverifiedPatients = async () => {
         let response= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
-            body:JSON.stringify({"query":`SELECT doctor.Username, Doc_Id, Sp_Id, Doc_Name, Doc_Phone_No, Doc_Dob, Doc_Date_Registered, Doc_Proof
-            , Doc_Age_Proof FROM healthgram.tbl_userbase userbase JOIN healthgram.tbl_doctor doctor On userbase.Username = doctor.Username and userbase.User_Status = 'not verified';`})
+            body:JSON.stringify({"query":`SELECT patient.Username, Pat_Id, Pat_Name, Pat_Phone_No, Pat_Dob, Pat_Date_Registered, Pat_Id_Proof FROM healthgram.tbl_userbase userbase JOIN healthgram.tbl_patient patient On userbase.Username = patient.Username and userbase.User_Status = 'not verified';`})
+            
         });
         let table = await response.json();
-        setNotVerifiedDoctors(table)
+        setNotVerifiedPatients(table)
     }
 
-    const getDoctorDetails = async () => {
+    const getPatientDetails = async () => {
         let response= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
-            body:JSON.stringify({"query":`SELECT * FROM healthgram.tbl_doctor doctor JOIN  healthgram.tbl_userbase userbase On userbase.Username = doctor.Username;`})
+            body:JSON.stringify({"query":`SELECT * FROM healthgram.tbl_patient patient JOIN  healthgram.tbl_userbase userbase On userbase.Username = patient.Username;`})
         });
         let table = await response.json();
-        setDoctorDetails(table);
+        setPatientDetails(table);
     }
 
     function fetchAllData() {
-        getUnverifiedDoctors();
-        getDoctorDetails();
+        getUnverifiedPatients();
+        getPatientDetails();
     }
 
-    // Automatically Fetch doctor data at first of loading
+    // Automatically Fetch patient data at first of loading
     if (loadForFirstTime) {
         fetchAllData();
         setLoadForFirstTime(false);
@@ -87,18 +87,17 @@ export default function Doctor(props) {
 
     return <ContentWrapper isActive={props.isActive}>
         <RefreshButton onClick={ () => fetchAllData() }><CachedIcon style={{ color: '#035aa0'}} /></RefreshButton>
-        <NotVerifiedDoctorsPannel>
+        <NotVerifiedPatientsPannel>
             <MaterialTable
-                title="Doctors to be verified"
-                data={notVerifiedDoctors}
+                title="Patients to be verified"
+                data={notVerifiedPatients}
                 columns={[
-                    { title: "Doc ID", field: "Doc_Id", editable: false },
-                    { title: "Specialization ID", field: "Doc_Id", editable: false },
+                    { title: "Pat ID", field: "Pat_Id", editable: false },
                     { title: "Email", field: "Username" },
-                    { title: "Name", field: "Doc_Name" },
-                    { title: "Phone Number", field: 'Doc_Phone_No', },
-                    { title: "DOB", field: "Doc_Dob", },
-                    { title: "Registerd on", field: 'Doc_Date_Registered', },
+                    { title: "Name", field: "Pat_Name" },
+                    { title: "Phone Number", field: 'Pat_Phone_No', },
+                    { title: "DOB", field: "Pat_Dob", },
+                    { title: "Registerd on", field: 'Pat_Date_Registered', },
                 ]}
                 options={{
                     actionsColumnIndex: 0, addRowPosition: "first",
@@ -120,11 +119,9 @@ export default function Doctor(props) {
                     }
                 }]}
                 detailPanel={rowData => {
-                    // console.log('rowData is: ', (notVerifiedDoctors.find(o => o.Doc_Id == rowData.Doc_Id)).Doc_Proof);
                     return (
                         <>
-                            <img src={(notVerifiedDoctors.find(o => o.Doc_Id == rowData.Doc_Id)).Doc_Proof } />
-                            <img src={(notVerifiedDoctors.find(o => o.Doc_Id == rowData.Doc_Id)).Doc_Age_Proof} />
+                            <img src={(notVerifiedPatients.find(o => o.Pat_Id == rowData.Pat_Id)).Pat_Id_Proof  } />
                         </>
                     )
                   }}
@@ -139,27 +136,24 @@ export default function Doctor(props) {
                     // backgroundColor: 'transparent'
                 }}
             />
-        </NotVerifiedDoctorsPannel>
-        <AllDoctors>
+        </NotVerifiedPatientsPannel>
+        <AllPatients>
             <MaterialTable
-                title="Doctors Details"
-                data={doctorDetails}
+                title="Patients Details"
+                data={patientDetails}
                 columns={[
-                    { title: "Doc ID", field: "Doc_Id" },
-                    { title: "Status", field: "User_Status", lookup: {'verified': '🟢 verified', 'not verified': '🟡 not verified', 'inactive': '⛔ inactive'} },
-                    { title: "Specialization ID", field: "Doc_Id" },
+                    { title: "Patient ID", field: "Pat_Id" },
+                    { title: "Status", field: "User_Status", lookup: {'verified': '🟢 verified', 'not verified': '🟡 not verified', 'inactive': '⛔ inactive'}},
                     { title: "Email", field: "Username" },
-                    { title: "Name", field: "Doc_Name" },
-                    { title: "Phone Number", field: 'Doc_Phone_No', },
-                    { title: "DOB", field: "Doc_Dob", },
-                    { title: "Registerd on", field: 'Doc_Date_Registered', },
-                    { title: "Tokens", field: "Doc_No_Of_Tokens", },
-                    { title: "Fee", field: 'Doc_Fee', },
-                    { title: "Gender", field: "Doc_Gender", },
-                    { title: "House Number", field: 'Doc_House_No', },
-                    { title: "Street", field: 'Doc_Street', },
-                    { title: "District", field: "Doc_Dist", },
-                    { title: "Pin Code", field: 'Doc_Pin', },
+                    { title: "Name", field: "Pat_Name" },
+                    { title: "Phone Number", field: 'Pat_Phone_No', },
+                    { title: "DOB", field: "Pat_Dob", },
+                    { title: "Registerd on", field: 'Pat_Date_Registered', },
+                    { title: "Gender", field: "Pat_Gender", },
+                    { title: "House Number", field: 'Pat_House_No', },
+                    { title: "Street", field: 'Pat_Street', },
+                    { title: "District", field: "Pat_Dist", },
+                    { title: "Pin Code", field: 'Pat_Pin', },
                 ]}
                 options={{
                     actionsColumnIndex: 0, addRowPosition: "first",
@@ -183,16 +177,14 @@ export default function Doctor(props) {
                             });
                             let table = await response.json();
                             console.log('table is: ', table);
-                            getDoctorDetails();
+                            getPatientDetails();
                         }
                     }),
                 ]}
                 detailPanel={rowData => {
-                    console.log('rowData is: ', doctorDetails);
                     return (
                         <>
-                            <img src={rowData.Doc_Proof } />
-                            <img src={rowData.Doc_Age_Proof} />
+                            <img src={rowData.Pat_Id_Proof } />
                         </>
                     )
                 }}
@@ -202,11 +194,10 @@ export default function Doctor(props) {
                     display: 'flex',
                     boxShadow: 'rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px',
                     flexDirection: 'column',
-                    borderRadius: '1rem',    
-                    marginBottom: '0px'
+                    borderRadius: '1rem'
                     // backgroundColor: 'transparent'
                 }}
             />
-        </AllDoctors> 
-    </ContentWrapper>
+        </AllPatients> 
+    </ContentWrapper>;
 }

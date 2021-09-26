@@ -6,15 +6,16 @@ import { AccountBox } from './pages/accountBox';
 import { AdminPanel } from './pages/adminPanel';
 import { DoctorPanel } from './pages/doctorPanel';
 import { PatientPanel } from './pages/patientPanel';
+import { Booking } from './pages/booking';
 
 function App() {
 	return (<>
 		<Router>
 			<Switch>
 				<Route exact path="/">
-					<Navbar />
-					<Home />
-					{/* <AdminPanel /> */}
+					{/* <Navbar /> */}
+					{/* <Home /> */}
+					<AdminPanel />
 				</Route>
 				<Route exact path="/registerPatient">
 					<AccountBox type={'registerPatient'} />
@@ -33,6 +34,11 @@ function App() {
 				</Route>
 				<Route exact path="/patient">
 					<PatientPanel />
+					<Navbar />
+				</Route>
+				<Route exact path="/booking">
+					<Navbar />
+					<Booking />
 				</Route>
 			</Switch>
 		</Router>

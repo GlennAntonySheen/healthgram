@@ -26,15 +26,20 @@ export function LoginInForm (props) {
         let response= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
-            body:JSON.stringify({"query":`SELECT * FROM userbase WHERE Username="${data.email}";`})
+            body:JSON.stringify({"query":`SELECT * FROM tbl_userbase WHERE Username="${data.email}";`})
+            // body:JSON.stringify({"query":`SELECT * FROM tbl_userbase WHW`})
         });
         let userbaseTable = await response.json();
+        // let userbaseTable = await response.text();
         console.log(userbaseTable);
+        // console.log(userbaseTable.length);
 
         if (userbaseTable.length == 0 || userbaseTable[0].Password != data.password) {
             setLoginErrorText('Your Username Or Password Is Invalid.');
         } else if (userbaseTable[0].User_Status == 'not verified') {
             setLoginErrorText('Your Details Are Yet To Be Verified, You Will Be Notified When Its Completed.');
+        } else if (userbaseTable[0].User_Status == 'inactive') {
+            setLoginErrorText('Your Account Has Been Banned');
         } else {
             sessionStorage.setItem('Username', userbaseTable[0].Username);
             if (userbaseTable[0].User_Type == 'admin') {
@@ -96,7 +101,8 @@ export function LoginInForm (props) {
         </FormContainer>
         <Button type="submit" onClick={() =>handleSubmit(OnSubmit)()}disable={isValid}>Log in</Button>
         <ErrorText>{loginErrorText}</ErrorText>
-        <pre>{JSON.stringify(watch(), null, 2)}</pre>
+        {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
+        {/* <button type="button" onClick={() =>console.log(data.email)}>gfhg</button> */}
     </>;
 }
 

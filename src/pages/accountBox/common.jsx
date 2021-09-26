@@ -16,7 +16,7 @@ export const Form = styled.form`
     /* display: flex; */
     /* background-color: yellow;   */
 
-    #Page2, #Page3, #Page4 {
+    #Page2, #Page3, #Page4, #Page5 {
         left: 450px;
     }
 `;

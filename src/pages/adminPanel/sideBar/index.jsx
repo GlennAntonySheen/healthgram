@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import pic from './profile.jpg';
 import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
 
 const Sidebar = styled.div`
     height: calc(100% - 20px);
-    /* position: fixed; */
     display: flex;
     flex-direction: column;
     top: 0;
     left: 0;
     margin: 10px;
     padding: 0;
-    width: ${ props => props.isActive ? '240px' : '78px' };
+    position: fixed;
+    width: ${ props => props.isActive ? '210px' : '78px' };
     background: linear-gradient(45deg,rgba(0,109,182,1) 0%,  rgba(9,57,121,1) 100%);
     box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
-border-radius: 1rem;
+    border-radius: 1rem;
     z-index: 99;
-    transition: all 0.5s ease;
+    transition: all 0.2s ease;
 `;
 
 const LogoContainer = styled.div`
@@ -29,16 +28,18 @@ const LogoContainer = styled.div`
     /* background-color: green; */
 
     #btn{
-        position: ${ props => props.isActive ? 'absolute' : 'absolute' };
+        /* position: ${ props => props.isActive ? 'absolute' : 'absolute' }; */
+        position: relative;
         color: #fff;
-        left: ${ props => props.isActive ? '90%' : '5%' };
+        /* left: ${ props => props.isActive ? '90%' : '5%' }; */
         font-size: 26px;
         height: 50px;
         width: 50px;
         cursor: pointer;
         text-align: center;
         line-height: 50px;
-        transform: translateX(-50%);
+        transform: ${ props => props.isActive ? 'translateX(0%)' : 'translateX(-70%)' };
+        /* transform: calc(translateX(-50%)) */
         /* background-color: yellow; */
     }
 `;
@@ -224,25 +225,24 @@ const NameJob = styled.div`
 
 
 export default function SideBar (props) {
-    const [ active, setActive ] = useState(false);
-
-    return <><Sidebar isActive={active}>
-        <LogoContainer isActive={active}>
-            <Logo isActive={active}>
+    // const [ active, setActive ] = useState(false);
+    return <><Sidebar isActive={props.isActive}>
+        <LogoContainer isActive={props.isActive}>
+            <Logo isActive={props.isActive}>
                 {/* <i class='bx bxl-c-plus-plus'></i> */}
                 <div>Admin Panel</div>
             </Logo>
-            <i class={active ? 'bx bx-menu-alt-right' :'bx bx-menu'} id="btn"  onClick={() => setActive(!active)}></i>
+            <i class={props.isActive ? 'bx bx-menu-alt-right' :'bx bx-menu'} id="btn"  onClick={() => props.setActive(!props.isActive)}></i>
         </LogoContainer>
         <NavList>
-            <Nav isActive={active}>
+            <Nav isActive={props.isActive} onClick={() => props.setMenu('userbase')}>
                 <a href="#">
                     <i class='bx bx-user-circle'></i>
                     <span>User Base</span>
                 </a>
                 <div>User Base</div>
             </Nav>
-            <Nav isActive={active}>
+            <Nav isActive={props.isActive} onClick={() => props.setMenu('doctorCategory')}>
                 <a href="#">
                     <i class='bx bx-category'></i>
                     {/* <LocalHospitalIcon id="icon"></LocalHospitalIcon> */}
@@ -250,28 +250,28 @@ export default function SideBar (props) {
                 </a>
                 <div>Doctor Category</div>
             </Nav>
-            <Nav isActive={active}>
+            <Nav isActive={props.isActive} onClick={() => props.setMenu('doctor')}>
                 <a href="#">
                     <i class='bx bx-user'></i>
                     <span>Doctors</span>
                 </a>
                 <div>Doctors</div>
             </Nav>
-            <Nav isActive={active}>
+            <Nav isActive={props.isActive} onClick={() => props.setMenu('patient')}>
                 <a href="#">
                     <i class='bx bx-user'></i>
                     <span>Patients</span>
                 </a>
                 <div>Patients</div>
             </Nav>
-            <Nav isActive={active}>
+            <Nav isActive={props.isActive}>
                 <a href="#">
                     <i class='bx bx-calendar-event'></i>
                     <span>Booking</span>
                 </a>
                 <div>Booking</div>
             </Nav>
-            <Nav isActive={active}>
+            <Nav isActive={props.isActive}>
                 <a href="#">
                     <i class='bx bx-cog' ></i>
                     <span>Settings</span>
@@ -280,9 +280,8 @@ export default function SideBar (props) {
             </Nav>
         </NavList>
         <ProfileContent>
-            <Profile isActive={active}>
+            <Profile isActive={props.active}>
                 <ProfileDetails>
-                    <img src={pic} />
                     <NameJob>
                         <div class="name">Prem Shahi</div>
                         <div class="job">Web Designer</div>
