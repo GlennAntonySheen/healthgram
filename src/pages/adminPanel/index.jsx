@@ -11,7 +11,6 @@ const AdminPanelWrapper = styled.div`
     width: 100vw;
     display: flex;
     padding: 0px;
-    /* flex-direction: row;background-color: yellow; */
 `;
 
 export function AdminPanel (props) {

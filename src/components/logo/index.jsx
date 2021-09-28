@@ -8,11 +8,13 @@ const LogoWrapper = styled.div`
     display: flex;
     align-items: center;
     margin-left: 40px;
+    /* background-color: red; */
 
     img {
         height: 100%;
         /* width: fit-content; */
         flex-grow: 1;
+        border-radius: 1rem;
     }
 
     h1 {

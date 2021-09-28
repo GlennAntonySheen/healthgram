@@ -16,10 +16,6 @@ export function LoginInForm (props) {
     const [showpswd, setShowpswd] = useState(true);
     const [loginErrorText, setLoginErrorText] = useState('')
 
-    useEffect(()=>{
-        
-        // console.log(`userbaseTable is: ${JSON.stringify(userbaseTable)}`);
-    },[])
 
     const OnSubmit = async data => {
         // console.log(data)
@@ -30,9 +26,6 @@ export function LoginInForm (props) {
             // body:JSON.stringify({"query":`SELECT * FROM tbl_userbase WHW`})
         });
         let userbaseTable = await response.json();
-        // let userbaseTable = await response.text();
-        console.log(userbaseTable);
-        // console.log(userbaseTable.length);
 
         if (userbaseTable.length == 0 || userbaseTable[0].Password != data.password) {
             setLoginErrorText('Your Username Or Password Is Invalid.');
@@ -41,7 +34,19 @@ export function LoginInForm (props) {
         } else if (userbaseTable[0].User_Status == 'inactive') {
             setLoginErrorText('Your Account Has Been Banned');
         } else {
+
             sessionStorage.setItem('Username', userbaseTable[0].Username);
+            sessionStorage.setItem('UserType', userbaseTable[0].User_Type);
+
+            // Creating entry in Login table
+            let res= await fetch("http://localhost/healthgram/test.php",{
+                method:"POST",
+                header:{"Content-Type": "application/json"},
+                body:JSON.stringify({"query":`INSERT INTO tbl_login (Username, Login_Time, Logout_Time) VALUES ('${userbaseTable[0].Username}', current_timestamp(), NULL) ;`})
+            });
+            let loginTable = await res.json();
+            console.log(loginTable);
+
             if (userbaseTable[0].User_Type == 'admin') {
                 history.push('./admin');
             } else if (userbaseTable[0].User_Type == 'doctor') {

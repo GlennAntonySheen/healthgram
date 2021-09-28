@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import EventIcon from '@mui/icons-material/Event';
 
 const PatientPanelWrapper = styled.div`
-    /* height: 100vh; */
+    height: 200vh;
     width: 100vw;
     margin-top: 80px;
     display: flex;
@@ -36,6 +36,7 @@ const FloatingButton = styled(Link)`
 `;
                                                                                                                                 
 export function PatientPanel (props) {
+    window.addEventListener("scroll", () => console.log("hello"));
     return <PatientPanelWrapper>Patient Panel
         
         <FloatingButton to="/booking">

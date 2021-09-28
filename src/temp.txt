@@ -34,4 +34,14 @@ CREATE TABLE `healthgram`. ( `Sp_Id` INT NOT NULL AUTO_INCREMENT , `Sp_Name` VAR
 INSERT INTO `doctor category` (`Sp_Id`, `Sp_Name`) VALUES (NULL, 'Cardiologist'), (NULL, 'Audiologist')
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+-- tbl_login --
+CREATE TABLE `healthgram`.`tbl_login` ( `Username` VARCHAR(35) NOT NULL , `Login_Time` TIMESTAMP NOT NULL , `Logout_Time` TIMESTAMP NULL, FOREIGN KEY(Username) REFERENCES tbl_userbase(Username)) ENGINE = InnoDB; 
+
+---- @ for logging out ----
+UPDATE `tbl_login` SET `Logout_Time`=CURRENT_TIMESTAMP WHERE `Logout_Time` IS NULL AND `Username`='glenn@gmail.com' ORDER BY `Login_Time` DESC LIMIT 1; 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 SELECT doctor.Username, Doc_Id, Sp_Id, Doc_Name, Doc_Phone_No, Doc_Dob, Doc_Date_Registered FROM healthgram.tbl_userbase userbase JOIN healthgram.tbl_doctor doctor On userbase.Username = doctor.Username and userbase.User_Status = 'not verified';

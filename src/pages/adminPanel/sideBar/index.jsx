@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
 
@@ -226,6 +227,19 @@ const NameJob = styled.div`
 
 export default function SideBar (props) {
     // const [ active, setActive ] = useState(false);
+    const history = useHistory();
+
+    const logout = async () => {
+        let response = await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`UPDATE tbl_login SET Logout_Time=CURRENT_TIMESTAMP WHERE Logout_Time IS NULL AND Username='${sessionStorage.getItem('Username')}' ORDER BY Login_Time DESC LIMIT 1; ;`})
+        });
+        sessionStorage.removeItem('Username')
+        sessionStorage.removeItem('UserType')
+        history.push('./home');
+    }
+
     return <><Sidebar isActive={props.isActive}>
         <LogoContainer isActive={props.isActive}>
             <Logo isActive={props.isActive}>
@@ -246,7 +260,7 @@ export default function SideBar (props) {
                 <a href="#">
                     <i class='bx bx-category'></i>
                     {/* <LocalHospitalIcon id="icon"></LocalHospitalIcon> */}
-                    <span>DoctorCategory</span>
+                    <span>Doctor Category</span>
                 </a>
                 <div>Doctor Category</div>
             </Nav>
@@ -287,7 +301,7 @@ export default function SideBar (props) {
                         <div class="job">Web Designer</div>
                     </NameJob>
                 </ProfileDetails>
-                <i class='bx bx-log-out' id="log_out"></i>
+                <i class='bx bx-log-out' id="log_out" onClick={logout}></i>
             </Profile>
         </ProfileContent>
     </Sidebar>

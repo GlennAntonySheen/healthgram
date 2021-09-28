@@ -1,0 +1,8 @@
+* doctoer specialization must be read fro db
+* Ui for successful registration of doctor and patient
+* Add snakbar to all register page
+* Add a delay for showing names when sidebar in admin panel is expanded
+* In Admin panel >> Doctor to be verified, change specialization id to its curresponding specialization
+* Add specialization in admin pannel
+* Add badge to icons in navbar of admin pannel
+* Make main navBar opaque on scroll

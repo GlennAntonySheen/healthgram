@@ -1,4 +1,3 @@
-import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Navbar } from './components/navbar';
 import { Home } from './pages/home';
@@ -13,9 +12,12 @@ function App() {
 		<Router>
 			<Switch>
 				<Route exact path="/">
-					{/* <Navbar /> */}
-					{/* <Home /> */}
-					<AdminPanel />
+					<Navbar />
+					<Booking />
+				</Route>
+				<Route exact path="/home">
+					<Navbar textColor={'white'}/> 
+					<Home />
 				</Route>
 				<Route exact path="/registerPatient">
 					<AccountBox type={'registerPatient'} />
@@ -33,11 +35,11 @@ function App() {
 					<DoctorPanel />
 				</Route>
 				<Route exact path="/patient">
+					<Navbar textColor={'white'} opaque={true}/>
 					<PatientPanel />
-					<Navbar />
 				</Route>
 				<Route exact path="/booking">
-					<Navbar />
+					<Navbar textColor={'white'}/>
 					<Booking />
 				</Route>
 			</Switch>

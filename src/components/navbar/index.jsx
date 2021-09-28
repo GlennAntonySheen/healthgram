@@ -1,25 +1,51 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import { Logo } from '../logo'
+import LogoImg from '../../assets/logo/Technology to Customize Your Design _ GraphicSprings - Brave 20-Jun-21 11_44_14 AM.png';
 
 const Wrapper = styled.div`
     height: 80px;
     width: 100%;
     display: flex;
     align-items: center;
-    position: absolute;
-    background-color: transparent;
+    position: fixed;
+    padding: 4px;
+    background-color: ${ props => props.opaque || props.scroll ? 'white' : 'transparent' };
     top: 0;
     z-index: 100;
-    box-shadow: 0 1px 3px rgba(15, 15, 15, 0.13);
+    box-shadow:  ${ props => props.opaque || props.scroll ? '0 1px 3px rgba(15, 15, 15, 0.13)' : 'none' };
+    transition: .08s ease-in-out;
 `;
 
 const LeftSection = styled.div`
     height: 100%;
+    width: auto;
     display: flex;
     flex: 1;
     /* background-color: yellow; */
+`;
+
+const LogoWrapper = styled.div`
+    height: 100%;
+    width: auto;
+    display: flex;
+    align-items: center;
+    margin-left: 40px;
+    /* background-color: red; */
+
+    img {
+        height: 100%;
+        flex-grow: 1;
+        border-radius: 1rem;
+    }
+
+    h1 {
+        height: auto;
+        margin-left: 5px;
+        font-size: 40px;
+        color: ${ props => props.opaque || props.scroll ? '#006DB6' : 'white' } ;
+    }
 `;
 
 const MiddleSection = styled.div`
@@ -56,12 +82,13 @@ const AccessibilityItem = styled(Link)`
     justify-content: flex-start;
     margin-left: .9rem;
     padding: .4rem;
-        text-decoration: none;
+    color: #006DB6;
+    text-decoration: none;
     /* background-color: orange; */
 
     h2 {
         margin: 0;
-        color: #006DB6;
+        color: ${ props => props.opaque || props.scroll ? '#006DB6' : 'white' } ;
         transition: .3s;
         text-decoration: none;
         /* background-color: lightblue; */
@@ -76,7 +103,7 @@ const AccessibilityItem = styled(Link)`
         margin: 0;
         padding: 0;
         font-size: 1.1rem;
-        color: #3a3939;
+        color: ${ props => props.opaque || props.scroll ? '#006DB6' : 'white' } ;
         font-weight: 500;
         font-family: 'Karla', sans-serif;
         /* background-color: lightreen; */
@@ -84,14 +111,23 @@ const AccessibilityItem = styled(Link)`
 `;
 
 export function Navbar(props) {
-    return <Wrapper>
-        <LeftSection><Logo></Logo></LeftSection>
+    const [scroll, setScroll] = useState(false);
+    
+    window.addEventListener('scroll', () => {setScroll(window.scrollY > 10)})
+
+return <Wrapper scroll={scroll} opaque={props.opaque}>
+        <LeftSection >
+            <LogoWrapper scroll={scroll} opaque={props.opaque}>
+                <img src={LogoImg} alt=""/>
+                <h1>HealthGram</h1>
+            </LogoWrapper>
+        </LeftSection>
         <MiddleSection></MiddleSection>
         <RightSection>
             <Accessibility>
-                <AccessibilityItem to="/registerPatient"><h2>Register</h2><h3>as Patient</h3></AccessibilityItem>
-                <AccessibilityItem to="/registerDoctor" ><h2>Register</h2><h3>as Doctor</h3></AccessibilityItem>
-                <AccessibilityItem to="/login"><h2>Log In</h2></AccessibilityItem>
+                <AccessibilityItem to="/registerPatient" scroll={scroll} opaque={props.opaque}><h2>Register</h2><h3>as Patient</h3></AccessibilityItem>
+                <AccessibilityItem to="/registerDoctor" scroll={scroll} opaque={props.opaque}><h2>Register</h2><h3>as Doctor</h3></AccessibilityItem>
+                <AccessibilityItem to="/login" scroll={scroll} opaque={props.opaque}><h2>Log In</h2></AccessibilityItem>
             </Accessibility>
         </RightSection>
     </Wrapper>
