@@ -214,8 +214,7 @@ export function DoctorRegistrationForm (props) {
                     />
                     {errors.phoneNo && <ErrorText>{errors.phoneNo.message}</ErrorText>}
 
-                    <br/>
-                    <FormControl variant="outlined" size="small" >
+                    <FormControl variant="outlined" size="small" style={{marginTop: '15px'}}>
                         <InputLabel id="demo-simple-select-outlined-label" value="Gender">Gender*</InputLabel>
                         <Select
                             name="gender"
