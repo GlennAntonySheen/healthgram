@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import Lottie from 'react-lottie';
@@ -80,13 +80,11 @@ const Searchbar = styled.div`
     }
 
     button {
-        /* position: absolute; */
-        /* margin: 10px; */
         padding: 5px;
         border: none;
-  /* top: 20px; */
         align-items: flex-end;
         border-radius: 300rem;
+        cursor: pointer;
         background-color: #1485eb;
 
         img {
@@ -97,11 +95,19 @@ const Searchbar = styled.div`
 `;
 
 const SearchResults = styled.div`
-    display: flex;
+    max-width: 100vw;
+    display: block;
     background-color: yellow;
 `;
 
+const Card = styled.div`
+    height: 300px;
+    width: 300px;
+    background-color: darkorange;
+`;
+
 export function Booking(props) {
+    const [doctors, setDoctors] = useState([])
 
     const { 
         watch, 
@@ -112,8 +118,21 @@ export function Booking(props) {
         formState: { errors, isValid }
     } = useForm({ mode: "all", reValidateMode: "all" });   
 
-    const searchForDoctor = async () => {
-        console.log('Searching for')
+    const searchForDoctor = async (data) => {
+        // console.log(data.searchQuery)
+        let response= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`SELECT Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name LIKE '%${data.searchQuery}%');`})
+        });
+        let table = await response.json();
+        console.log(table);
+        setDoctors(table);
+    }
+
+    function fn() {
+        // doctors.m(doctor)
+        console.log('doctor')
     }
 
     return <BookingPageContainer>        
@@ -147,10 +166,18 @@ export function Booking(props) {
                     <button onClick={ () => handleSubmit(searchForDoctor)()}><img src={SearchIcon}></img></button>
                     
                 </Searchbar>
-                    <pre>{JSON.stringify(watch(), null, 2)}</pre> 
+                    {JSON.stringify(watch(), null, 20)}
                 <SearchResults>
+                    <pre>{JSON.stringify(doctors, null, 2)}</pre> 
+                    { doctors.map((doctor, index) => 
+                        <Card />
+                
+                        
                     
+                    
+                    )}
                 </SearchResults>
+                    <button onClick={fn}></button>
             </SearchContainer>
         </BookingSection> 
     </BookingPageContainer>

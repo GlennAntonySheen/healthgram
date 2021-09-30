@@ -30,6 +30,7 @@ export function DoctorRegistrationForm (props) {
     const [doctorSpecializations, setDoctorSpecializations] = useState([])
     const [certificateDataURL, setCertificateDataURL] = useState('');
     const [drivingLicenceDataURL, setDrivingLicenceDataURL] = useState('');
+    const [profilePictureDataURL, setProfilePictureDataURL] = useState(null);
 
     const reader = new FileReader();
 
@@ -132,8 +133,10 @@ export function DoctorRegistrationForm (props) {
     const getSpId = () => {
         var id;
         doctorSpecializations.forEach(function (s) {
-            if (s.Sp_Id == getValues('specialization')) {
-                id = s.id;
+            
+            console.log(s.Sp_Name)
+            if (s.Sp_Name == getValues('specialization')) {
+                id = s.Sp_Id;
             }
         })
         return id;
@@ -159,10 +162,9 @@ export function DoctorRegistrationForm (props) {
                 header:{"Content-Type": "application/json"},
                 body:JSON.stringify({"query":`
                     INSERT INTO tbl_userbase(Username,Password,User_Type,User_Status) VALUES('${data.email}','${data.password}','doctor','not verified');
-                    INSERT INTO tbl_doctor (Doc_Id, Sp_Id, Username, Doc_Name, Doc_Phone_No, Doc_Dob, Doc_Gender, Doc_House_No, Doc_Street, Doc_Dist, Doc_Pin, Doc_Date_Registered, Doc_No_Of_Tokens, Doc_Fee, Doc_Proof, Doc_Age_Proof, Doc_Description) VALUES (NULL, '${getSpId()}', '${data.email}', '${data.name}', '${data.phoneNo}', '${data.dob}', '${data.gender}', '${data.houseNo}', '${data.street}', '${data.district}', '${data.pin}', CURRENT_TIMESTAMP, '0', '${data.fee}', '${certificateDataURL}', '${drivingLicenceDataURL}', '${data.selfDescription}');`})
+                    INSERT INTO tbl_doctor (Doc_Id, Sp_Id, Username, Doc_Name, Doc_Phone_No, Doc_Dob, Doc_Gender, Doc_House_No, Doc_Street, Doc_Dist, Doc_Pin, Doc_Date_Registered, Doc_No_Of_Tokens, Doc_Fee, Doc_Pic, Doc_Proof,  Doc_Age_Proof, Doc_Description) VALUES (NULL, '${getSpId()}', '${data.email}', '${data.name}', '${data.phoneNo}', '${data.dob}', '${data.gender}', '${data.houseNo}', '${data.street}', '${data.district}', '${data.pin}', CURRENT_TIMESTAMP, '0', '${data.fee}', ${profilePictureDataURL == null ? null : `'${profilePictureDataURL}'`}, '${certificateDataURL}', '${drivingLicenceDataURL}', '${data.selfDescription}');`})
             });
             let userbaseTable = await response.json();
-            console.log('userbaseTable: ', userbaseTable);
 
             if (userbaseTable.length == 0) {
                 alert('Your have Registered successfully. \nPlease be patient enough till we send you a confirmation letter within 1 - 2 days.');
@@ -443,7 +445,7 @@ export function DoctorRegistrationForm (props) {
             
                 <FormPage id="Page5">
                     <h3>UPLOAD DOCUMENTS</h3>
-                    <h5>Upload your Certificate Of Degree Completion</h5>
+                    <h5>Upload your Certificate Of Degree Completion*</h5>
                     <input 
                         type="file" 
                         name="certificate"
@@ -461,7 +463,7 @@ export function DoctorRegistrationForm (props) {
                     ></input>
                     {errors.certificate && <ErrorText>{errors.certificate.message}</ErrorText>}
 
-                    <h5>Upload your Driving Licence</h5>
+                    <h5>Upload your Driving Licence*</h5>
                     <input 
                         type="file" 
                         name="drivingLicence"
@@ -477,12 +479,27 @@ export function DoctorRegistrationForm (props) {
                         }}
                     ></input>
                     {errors.drivingLicence && <ErrorText>{errors.drivingLicence.message}</ErrorText>}
+                    {errors.certificate && <ErrorText>{errors.certificate.message}</ErrorText>}
+
+                    <h5>Profile Picture</h5>
+                    <input 
+                        type="file" 
+                        name="profilePicture"
+                        label="gjjkj"
+                        {...register("profilePicture")}
+                        onChange = { () => {
+                            reader.readAsDataURL(getValues('profilePicture')[0]);
+                            reader.onload = (e) => {
+                                setProfilePictureDataURL(reader.result);
+                            }
+                        }}
+                    ></input>
                 </FormPage>
             </Form>            
         </FormContainer>
         <Button id="NextBtn" onMouseEnter={nextBtnHover} onClick={nextBtnClick} value="Next" disable={btnDisable}>{buttonText}</Button> 
         <ErrorText>{registerError}</ErrorText>
-        {/* <button onClick = {() => console.log(doctorSpecializations) }>dfbnd</button> */}
+        <button onClick = {getSpId }>dfbnd</button>
         {/* <pre>{JSON.stringify(watch(), null, 2)}</pre>  */}
     </>
 }

@@ -187,7 +187,7 @@ export function PatientRegistrationForm (props) {
                     {errors.phoneNo && <ErrorText>{errors.phoneNo.message}</ErrorText>}
 
                     <br/>
-                    <FormControl variant="outlined" size="small" >
+                    <FormControl variant="outlined" size="small" style={{marginTop: '15px'}}>
                         <InputLabel id="demo-simple-select-outlined-label" value="Gender">Gender*</InputLabel>
                         <Select
                             name="gender"
@@ -348,7 +348,7 @@ export function PatientRegistrationForm (props) {
 
                 <FormPage id="Page4">                    
                     <h3>UPLOAD DOCUMENTS</h3>
-                    <h5>Upload your Driving Licence OR Any Proof For Your Age</h5>
+                    <h5>Upload your Driving Licence OR Any Proof For Your Age*</h5>
                     <input 
                         type="file" 
                         name="idProof"

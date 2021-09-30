@@ -43,13 +43,11 @@ UPDATE `tbl_login` SET `Logout_Time`=CURRENT_TIMESTAMP WHERE `Logout_Time` IS NU
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+---- search doctor ----
+SELECT * FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%%' OR tbl_doctor_category.Sp_Name LIKE '%ti%'); 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 SELECT doctor.Username, Doc_Id, Sp_Id, Doc_Name, Doc_Phone_No, Doc_Dob, Doc_Date_Registered FROM healthgram.tbl_userbase userbase JOIN healthgram.tbl_doctor doctor On userbase.Username = doctor.Username and userbase.User_Status = 'not verified';
 
-
-
-
----- search doctor ----
-SELECT * FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username WHERE User_Type='doctor' AND logout_time is NULL;
---- new ----
-SELECT * FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL;
