@@ -37,18 +37,6 @@ export function DoctorRegistrationForm (props) {
         marginTop: '15px'
     }
 
-    // const doctorSpecializations = [
-    //     { id: '1', title: 'Cardiologist' },
-    //     { id: '2', title: 'Audiologist' },
-    //     { id: '3', title: 'ENT' },
-    //     { id: '4', title: 'Gynaecologist' },
-    //     { id: '5', title: 'Paediatrician' },
-    //     { id: '6', title: 'Psychiatrists' },
-    //     { id: '7', title: 'Pulmonologist' },
-    //     { id: '8', title: 'Endocrinologist' },
-    //     { id: '9', title: 'Oncologist' },
-    // ];
-
     function nextBtnHover() {
         // console.log(((!(getValues('name') === undefined || getValues('name')=="")) && (errors.name === undefined))==true)
         if (page == 1) {
@@ -495,7 +483,7 @@ export function DoctorRegistrationForm (props) {
         </FormContainer>
         <Button id="NextBtn" onMouseEnter={nextBtnHover} onClick={nextBtnClick} value="Next" disable={btnDisable}>{buttonText}</Button> 
         <ErrorText>{registerError}</ErrorText>
-        <button onClick = {() => console.log(doctorSpecializations) }>dfbnd</button>
+        {/* <button onClick = {() => console.log(doctorSpecializations) }>dfbnd</button> */}
         {/* <pre>{JSON.stringify(watch(), null, 2)}</pre>  */}
     </>
 }

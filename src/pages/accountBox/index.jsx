@@ -31,8 +31,8 @@ const BackgroundImage = styled.div`
 
 const BoxContainer = styled.div`
 	height: auto;
-	width: 380px;
-  	/* min-height: 650px; */
+	min-width: 380px;
+	max-width: 380px;
 	padding-bottom: 10px;
 	display: flex;
 	flex-direction: column;
@@ -46,13 +46,14 @@ const BoxContainer = styled.div`
 `;
 
 const TopContainer = styled.div`
-	width: 100%;
 	height: 220px;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding: 0 1.8em;
-	padding-bottom: 5em;
+	padding: 0px;
+	/* padding-bottom: 5em; */
+	/* background-color: green; */
 `;
 
 const BackDrop = styled(motion.div)`
@@ -77,7 +78,7 @@ const HeaderContainer = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	padding-top: 15px;
+	padding: 0px 35px 50px;
 `;
 
 const HeaderText = styled.h2`
@@ -99,10 +100,11 @@ const SmallText = styled.h5`
 `;
 
 const InnerContainer = styled.div`
-	width: 100%;
+	/* width: 100%; */
 	display: flex;
 	flex-direction: column;
 	padding: 0 1.8em;
+	/* background-color: violet; */
 `;
 
 const backdropVariants = {
