@@ -1,10 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
+import Button from '@mui/material/Button';
 import Lottie from 'react-lottie';
+import DefaultDoctorProfilePicture from '../../assets/images/defaultDoctorProfilePicture.jpg'
 import animationData from '../../assets/lottie animations/49259-scroll-s.json';
 import BackgroungImg from '../../assets/images/booking backgroung.jpg'
 import SearchIcon from '../../assets/icons/bx-search-alt-2.svg'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const BookingPageContainer = styled.div`
     width: 100vw;
@@ -31,7 +34,7 @@ const IntroTextContainer = styled.div`
     /* background-color: orange; */
 
     h1 {
-        color: #1861e7;
+        color: #1976d2;
         font-family: 'Montserrat', sans-serif;
         font-size: 4.5rem;
         font-weight: 800;
@@ -95,15 +98,113 @@ const Searchbar = styled.div`
 `;
 
 const SearchResults = styled.div`
-    max-width: 100vw;
-    display: block;
-    background-color: yellow;
+    width: 100vw;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    padding: 20px 900px;
+    /* background-color: yellow; */
 `;
 
 const Card = styled.div`
     height: 300px;
-    width: 300px;
-    background-color: darkorange;
+    width: 600px;
+    margin: 43px;
+    display: flex;
+    align-items: center;
+    outline: none;
+    border: none;
+    border-radius: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    transition: .3s all ease-in-out;
+    /* background-color: #1485eb; */
+    
+    &:hover {
+        transform: translateY(-5px);
+    }
+    
+`;
+
+const ProfilePicture = styled.div`
+    height: 60%;
+    /* background-color: green; */
+    margin: 20px 0px 20px 20px;    
+
+    img {
+        height: 100%;
+        border-radius: 50%;
+    }
+    `;
+
+const CardTextContainer = styled.div`
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    flex: 1;
+    padding: 10px;
+    /* background-color: brown; */
+`;
+
+const DoctorName = styled.div`
+    margin: 20px 0px 0px;
+    font-family: 'poppins';
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #006db6;
+`;
+
+const DoctorDetails = styled.div`
+    font-family: 'poppins';
+    font-size: 1.3rem;
+    margin-bottom: -10px;
+    color: #006db6;
+    `;
+
+const DoctorDescription = styled.p`
+    height: 100%;
+    display: flex;
+    flex-grow: 1;
+    font-family: 'sans-pro-text';
+    font-weight: 100;
+    align-items: center;
+    color: rgb(81, 81, 84);
+    /* background-color: blue; */
+`;
+
+const DoctorBook = styled.div`
+    height: 70px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+    /* background-color: red; */
+
+    code {
+        font-size: 1.8rem;
+        color: #1976d2;
+    }
+
+    Button {
+        margin-right: 10px;
+    }
+    
+    /* button {
+        height: 100%;
+        padding: 0 10px;
+        font-family: 'poppins';
+        font-size: 1.5rem;
+        font-weight: lighter;
+        /* border: 2px solid #006db6; 
+        border: none;
+        border-radius: 5px;
+        outline: none;
+        color: white;
+        background-color: #006db6;
+    } */
 `;
 
 export function Booking(props) {
@@ -123,7 +224,7 @@ export function Booking(props) {
         let response= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
-            body:JSON.stringify({"query":`SELECT Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name LIKE '%${data.searchQuery}%');`})
+            body:JSON.stringify({"query":`SELECT tbl_userbase.Username, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name LIKE '%${data.searchQuery}%');`})
         });
         let table = await response.json();
         console.log(table);
@@ -147,7 +248,7 @@ export function Booking(props) {
                         speed: .030,
                         animationData: animationData,
                         rendererSettings: {
-                          preserveAspectRatio: "xMidYMid slice"
+                            preserveAspectRatio: "xMidYMid slice"
                         }
                     }}
                     height={70}
@@ -164,20 +265,31 @@ export function Booking(props) {
                         {...register("searchQuery")}
                     />
                     <button onClick={ () => handleSubmit(searchForDoctor)()}><img src={SearchIcon}></img></button>
-                    
                 </Searchbar>
-                    {JSON.stringify(watch(), null, 20)}
                 <SearchResults>
-                    <pre>{JSON.stringify(doctors, null, 2)}</pre> 
-                    { doctors.map((doctor, index) => 
-                        <Card />
-                
-                        
-                    
-                    
+                    {doctors.map((doctor, index) =>                         
+                        <Card>
+                            <ProfilePicture><img src={doctor.Doc_Pic || DefaultDoctorProfilePicture} /></ProfilePicture>
+                            <CardTextContainer>
+                                <DoctorName>{`Dr. ${doctor.Doc_Name.toUpperCase()}`}</DoctorName>
+                                <DoctorDetails>{`${doctor.Sp_Name}`}</DoctorDetails>
+                                <DoctorDetails>
+                                    {`${new Date().getFullYear() - doctor.Doc_Dob.substr(0, 4)} Years old, ${doctor.Doc_Gender.toUpperCase()}`}
+                                    <i class={`bx bx-${doctor.Doc_Gender}`}></i>
+                                </DoctorDetails>
+                                <DoctorDescription>{doctor.Doc_Description}</DoctorDescription>
+                                <DoctorBook>
+                                    <code>{`₹${doctor.Doc_Fee}`}</code>
+                                    {/* <button>Book</button> */}
+                                    <Button variant="contained" startIcon={<FavoriteBorderIcon />}>Book Now</Button>
+                                </DoctorBook>
+                            </CardTextContainer>
+                        </Card>
                     )}
                 </SearchResults>
-                    <button onClick={fn}></button>
+                    {JSON.stringify(watch(), null, 20)}
+                    <pre style={{maxWidth: "900px"}}>{JSON.stringify(doctors, null, 2)}</pre>
+                    <button onClick={fn}>fjjt</button>
             </SearchContainer>
         </BookingSection> 
     </BookingPageContainer>
