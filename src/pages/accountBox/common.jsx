@@ -13,7 +13,6 @@ export const Form = styled.form`
     width: 100%;
     position: relative;
     transition: 0.5s all;
-    /* display: flex; */
     /* background-color: yellow;   */
 
     #Page2, #Page3, #Page4, #Page5 {

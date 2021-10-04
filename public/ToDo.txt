@@ -5,4 +5,4 @@
 * In Admin panel >> Doctor to be verified, change specialization id to its curresponding specialization
 * Add specialization in admin pannel
 * Add badge to icons in navbar of admin pannel
-* Make main navBar opaque on scroll
+* Card in booking, text vobbles on hover animation 

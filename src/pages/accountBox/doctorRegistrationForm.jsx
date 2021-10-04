@@ -181,7 +181,7 @@ export function DoctorRegistrationForm (props) {
                 <p>Page {page} out of 5</p>
             </PageNav>
             <Form onSubmit={handleSubmit(onSubmit)}>
-                 <FormPage id="Page1">
+                <FormPage id="Page1">
                     <h3>PERSONAL INFO</h3>
                     <TextField
                         name="name"
@@ -499,7 +499,7 @@ export function DoctorRegistrationForm (props) {
         </FormContainer>
         <Button id="NextBtn" onMouseEnter={nextBtnHover} onClick={nextBtnClick} value="Next" disable={btnDisable}>{buttonText}</Button> 
         <ErrorText>{registerError}</ErrorText>
-        <button onClick = {getSpId }>dfbnd</button>
+        {/* <button onClick = {getSpId }>dfbnd</button> */}
         {/* <pre>{JSON.stringify(watch(), null, 2)}</pre>  */}
     </>
 }
