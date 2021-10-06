@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import styled from 'styled-components';
-
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 import FormControl from "@material-ui/core/FormControl";
 import Button from '@mui/material/Button';
 import Stepper from '@mui/material/Stepper';
@@ -9,6 +10,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 import Slider from '@mui/material/Slider';
+import LinearProgress from '@mui/material/LinearProgress';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -19,6 +21,7 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import DefaultDoctorProfilePicture from '../../assets/images/defaultDoctorProfilePicture.jpg'
 import animationData from '../../assets/lottie animations/49259-scroll-s.json';
+import DoctorVirtualCall from '../../assets/lottie animations/doctor-virtual-call.json';
 import BackgroungImg from '../../assets/images/booking backgroung.jpg'
 import SearchIcon from '../../assets/icons/searchdoctor.svg'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -97,7 +100,7 @@ const Searchbar = styled.div`
         padding: 12px 19px 16px;
         outline: none;
         border: none;
-        font-size: 22px;
+        font-size: 20px;
         transition:0.5s;
         /* background-color: orange; */
     }
@@ -242,17 +245,23 @@ const DoctorBook = styled.div`
 `;
 
 const BookingConfirmation = styled.div`
-    height: 700px;
-    width: 100vw;
-    background-color: pink;
+    height: 400px;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    /* background-color: pink; */
 `;
 
 
+
 export function Booking(props) {
+    document.title = "Booking"
+    
     const [activeStep, setActiveStep] = useState(0)
     const [priceRange, setPriceRange] = useState([0, 9999])
     const [doctors, setDoctors] = useState([])
-    const [doctorToBook, setDoctorToBook] = useState({})
+    const [doctorToBook, setDoctorToBook] = useState(null)
+    const [openDialogue, setOpenDialogue] = useState(false)
 
     const { 
         watch, 
@@ -288,15 +297,34 @@ export function Booking(props) {
     }));
 
     const searchForDoctor = async (data) => {
-        console.log(data)
         let response= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT tbl_userbase.Username, Doc_Id, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name = '${data.searchQuery}') AND tbl_doctor.Doc_Gender LIKE '${data.gender}' AND tbl_doctor.Doc_Fee BETWEEN ${priceRange[0]} AND ${priceRange[1]};`})
         });
         let table = await response.json();
-        console.log(table);
+        // console.log(table);
         setDoctors(table)
+    }
+
+    const requestDoctorConfirmation = async (doctor) => {
+        console.log(doctor)
+        let response= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`
+                INSERT INTO tbl_prescription (Pres_Id, Doc_Id, Pres_Date, Prescription) VALUES (NULL, '${doctor.Doc_Id}', NULL, NULL); 
+                INSERT INTO tbl_card (Card_Id, Pat_Id, Card_No, Card_Exp_Date, Card_Type) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), NULL, NULL, NULL); 
+                INSERT INTO tbl_payment (Pay_Id, Card_Id, Pay_Amount, Pay_Status) VALUES (NULL, (SELECT MAX(Card_Id) FROM tbl_card), NULL, 'not paid');
+                INSERT INTO tbl_booking (Booking_Id, Pat_Id, Doc_Id, Pres_Id, Pay_Id, Booking_Amount, Booking_Date, Booking_Status) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), '${doctor.Doc_Id}', (SELECT MAX(Pres_Id) FROM tbl_prescription), (SELECT MAX(Pay_Id) FROM tbl_payment), '${doctor.Doc_Fee}', current_timestamp(), 'not confirmed');`})
+        });
+        let table = await response.json();
+        console.log(`
+        INSERT INTO tbl_prescription (Pres_Id, Doc_Id, Pres_Date, Prescription) VALUES (NULL, '${doctor.Doc_Id}', NULL, NULL); 
+        INSERT INTO tbl_card (Card_Id, Pat_Id, Card_No, Card_Exp_Date, Card_Type) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), NULL, NULL, NULL); 
+        INSERT INTO tbl_payment (Pay_Id, Card_Id, Pay_Amount, Pay_Status) VALUES (NULL, (SELECT MAX(Card_Id) FROM tbl_card), NULL, 'not paid');
+        INSERT INTO tbl_booking (Booking_Id, Pat_Id, Doc_Id, Pres_Id, Pay_Id, Booking_Amount, Booking_Date, Booking_Status) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), '${doctor.Doc_Id}', (SELECT MAX(Pres_Id) FROM tbl_prescription), (SELECT MAX(Pay_Id) FROM tbl_payment), '${doctor.Doc_Fee}', current_timestamp(), 'not confirmed');`);
+        // setDoctors(table)
     }
 
     function currencyFormat(num) {
@@ -306,6 +334,7 @@ export function Booking(props) {
     function fn() {
         console.log('doctor')
     }
+    
 
     return <BookingPageContainer>        
         <IntroContainer>
@@ -339,7 +368,7 @@ export function Booking(props) {
                     <StepLabel>Payment</StepLabel>
                 </Step>
             </Stepper>
-            { activeStep == 0 && <>
+            { (activeStep == 0 || activeStep ==1) && <>
                 <SearchContainer>
                     <Filter>
                         <Gender>
@@ -433,9 +462,11 @@ export function Booking(props) {
                                         variant="contained" 
                                         startIcon={<FavoriteBorderIcon />} 
                                         docId={doctor.Doc_Id}
-                                        onClick={(event) => {
-                                            setDoctorToBook(doctor)
-                                            setActiveStep(1)
+                                        onClick={ () => {
+                                            // setDoctorToBook(doctor)
+                                            setOpenDialogue(true)
+                                            setActiveStep(1)      
+                                            requestDoctorConfirmation(doctor)                                      
                                         }}>
                                         Book Now
                                     </Button>
@@ -445,14 +476,40 @@ export function Booking(props) {
                     )}
                 </SearchResults>
             </> }
-            { activeStep == 1 && <>
+            <Dialog open={openDialogue}>
                 <BookingConfirmation>
-                    <div>{doctorToBook}</div>
+                    <Lottie 
+                        options={{
+                            loop: true,
+                            autoplay: true,
+                            animationData: DoctorVirtualCall,
+                            rendererSettings: {
+                                preserveAspectRatio: "xMidYMid slice"
+                            }
+                        }}
+                        height={300}
+                        width={600}
+                        /> 
+                        <LinearProgress variant="buffer" value={50} valueBuffer={50} sx={{ my: 2 }} />
+                        <DialogTitle>Please wait till the doctor confirms the booking</DialogTitle>
+                    <Button 
+                        variant="contained" 
+                        sx={{ mx: 28, my: 2 }} 
+                        onClick={ async () => {
+                            setOpenDialogue(false)    
+                            setActiveStep(0)                                                   
+                        }}
+                    >Cancel</Button>
+                </BookingConfirmation>
+            </Dialog>
+            { activeStep == 2 && <>
+                <BookingConfirmation>
+                    {/* {doctorToBook} */}
                 </BookingConfirmation>
             </> }
-                    {/* {JSON.stringify(watch(), null, 20)} */}
-                    {/* <pre style={{maxWidth: "900px"}}>{JSON.stringify(doctors, null, 2)}</pre> */}
-                    {/* <button onClick={fn}>fjjt</button> */}
+            {/* {JSON.stringify(watch(), null, 20)} */}
+            {/* <pre style={{maxWidth: "900px"}}>{JSON.stringify(doctors, null, 2)}</pre> */}
+            {/* <button onClick={() => requestDoctorConfirmation()}>fjjt</button> */}
         </BookingSection> 
     </BookingPageContainer>
 }

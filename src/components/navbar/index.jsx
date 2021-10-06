@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import ReactDOM from 'react-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
 import { Link } from 'react-router-dom';
 import LogoImg from '../../assets/logo/Technology to Customize Your Design _ GraphicSprings - Brave 20-Jun-21 11_44_14 AM.png';
 
@@ -112,6 +115,18 @@ const AccessibilityItem = styled(Link)`
 
 export function Navbar(props) {
     const [scroll, setScroll] = useState(false);
+    const history = useHistory();
+
+    const logout = async () => {
+        let response = await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`UPDATE tbl_login SET Logout_Time=CURRENT_TIMESTAMP WHERE Logout_Time IS NULL AND Username='${sessionStorage.getItem('Username')}' ORDER BY Login_Time DESC LIMIT 1; ;`})
+        });
+        sessionStorage.removeItem('Username')
+        sessionStorage.removeItem('UserType')
+        history.push('./home');
+    }
     
     window.addEventListener('scroll', () => {setScroll(window.scrollY > 10)})
 
@@ -124,11 +139,23 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
         </LeftSection>
         <MiddleSection></MiddleSection>
         <RightSection>
-            <Accessibility>
+            {(props.type == 'home') && <Accessibility>
                 <AccessibilityItem to="/registerPatient" scroll={scroll} opaque={props.opaque}><h2>Register</h2><h3>as Patient</h3></AccessibilityItem>
                 <AccessibilityItem to="/registerDoctor" scroll={scroll} opaque={props.opaque}><h2>Register</h2><h3>as Doctor</h3></AccessibilityItem>
-                <AccessibilityItem to="/login" scroll={scroll} opaque={props.opaque}><h2>Log In</h2></AccessibilityItem>
-            </Accessibility>
-        </RightSection>
+                <AccessibilityItem to="/login" scroll={scroll} opaque={props.opaque}><h2>Log In</h2><h3><LoginIcon /></h3></AccessibilityItem>
+            </Accessibility> }
+            {(props.type == 'patient') && <Accessibility>
+                <AccessibilityItem to="/booking" scroll={scroll} opaque={props.opaque}><h2>Book</h2><h3>a Doctor</h3></AccessibilityItem>
+                <AccessibilityItem 
+                    to="/home" 
+                    scroll={scroll} 
+                    opaque={props.opaque}
+                    onClick={ () => logout}
+                >
+                    <h2>Log Out</h2><h3><LogoutIcon /></h3>
+                </AccessibilityItem>
+            </Accessibility> }
+        </RightSection> 
+        {/* <button onClick={() => console.log(props)}>ttrtjrtrtjrtrtjrrtjr</button> */}
     </Wrapper>
 }

@@ -8,7 +8,7 @@ const PatientPanelWrapper = styled.div`
     width: 100vw;
     margin-top: 80px;
     display: flex;
-    background-color: green;
+    /* background-color: green; */
 `;
 
 const FloatingButton = styled(Link)`

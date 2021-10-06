@@ -12,11 +12,11 @@ function App() {
 		<Router>
 			<Switch>
 				<Route exact path="/">
-					<Navbar />
+					<Navbar textColor={'white'} type={'patient'} />
 					<Booking />
 				</Route>
 				<Route exact path="/home">
-					<Navbar textColor={'white'}/> 
+					<Navbar textColor={'white'} opaque={true} type={'home'}/> 
 					<Home />
 				</Route>
 				<Route exact path="/registerPatient">
@@ -32,14 +32,16 @@ function App() {
 					<AdminPanel />
 				</Route>
 				<Route exact path="/doctor">
+					<title>doctor</title>
+					<Navbar opaque={true} type={'doctor'} />
 					<DoctorPanel />
 				</Route>
 				<Route exact path="/patient">
-					<Navbar textColor={'white'} opaque={true}/>
+					<Navbar textColor={'white'} opaque={true} type={'patient'}/>
 					<PatientPanel />
 				</Route>
 				<Route exact path="/booking">
-					<Navbar textColor={'white'}/>
+					<Navbar textColor={'white'} type={'patient'} />
 					<Booking />
 				</Route>
 			</Switch>

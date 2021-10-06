@@ -35,6 +35,26 @@ INSERT INTO `doctor category` (`Sp_Id`, `Sp_Name`) VALUES (NULL, 'Cardiologist')
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+---- tbl_prescription ----
+CREATE TABLE `healthgram`.`tbl_prescription` ( `Pres_Id` INT NOT NULL AUTO_INCREMENT , `Doc_Id` INT NOT NULL , `Pres_Date` TIMESTAMP NOT NULL , `Prescription` JSON NOT NULL , PRIMARY KEY (`Pres_Id`), FOREIGN KEY(Doc_Id) REFERENCES tbl_doctor(Doc_Id))  ENGINE = InnoDB; 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+---- tbl_card ----
+CREATE TABLE `healthgram`.`tbl_card` ( `Card_Id` INT NOT NULL AUTO_INCREMENT , `Pat_Id` INT NOT NULL , `Card_No` VARCHAR(35) NOT NULL , `Card_Exp_Date` DATE NOT NULL , `Card_Type` VARCHAR(10) NOT NULL , PRIMARY KEY (`Card_Id`), FOREIGN KEY(Pat_Id) REFERENCES tbl_patient(Pat_Id)) ENGINE = InnoDB; 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+---- tbl_Payment ----
+CREATE TABLE `healthgram`.`tbl_payment` ( `Pay_Id` INT NOT NULL AUTO_INCREMENT , `Card_Id` INT NOT NULL , `Pay_Amount` DECIMAL NOT NULL , `Pay_Status` VARCHAR(35) NOT NULL , PRIMARY KEY (`Pay_Id`), FOREIGN KEY(Card_Id) REFERENCES tbl_card(Card_Id)) ENGINE = InnoDB; 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+---- tbl_Booking ----
+CREATE TABLE `healthgram`.`tbl_Booking` ( `Booking_Id` INT NOT NULL AUTO_INCREMENT , `Pat_Id` INT NOT NULL , `Doc_Id` INT NOT NULL , `Pres_Id` INT NOT NULL , `Pay_Id` INT NOT NULL , `Booking_Amount` DECIMAL NOT NULL , `Booking_Date` TIMESTAMP NOT NULL , `Booking_Status` VARCHAR(35) NOT NULL , PRIMARY KEY (`Booking_Id`), FOREIGN KEY(Pat_Id) REFERENCES tbl_patient(Pat_Id), FOREIGN KEY(Doc_Id) REFERENCES tbl_doctor(Doc_Id), FOREIGN KEY(Pres_Id) REFERENCES tbl_prescription(Pres_Id), FOREIGN KEY(Pay_Id) REFERENCES tbl_payment(Pay_Id)) ENGINE = InnoDB; 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 -- tbl_login --
 CREATE TABLE `healthgram`.`tbl_login` ( `Username` VARCHAR(35) NOT NULL , `Login_Time` TIMESTAMP NOT NULL , `Logout_Time` TIMESTAMP NULL, FOREIGN KEY(Username) REFERENCES tbl_userbase(Username)) ENGINE = InnoDB; 
 

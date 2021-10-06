@@ -4,8 +4,13 @@ import styled from 'styled-components';
 import MaterialTable from 'material-table';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
 import CachedIcon from '@material-ui/icons/Cached';
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
+import InputAdornment from '@mui/material/InputAdornment';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
@@ -14,6 +19,7 @@ import Alert from '@mui/material/Alert';
 const ContentWrapper = styled.div`
     width: 100%;
     padding: 10px;
+    padding-right: 50px;
     overflow: scroll;
     scrollbar-width: none;
     position: relative;
@@ -27,15 +33,15 @@ const RefreshButton = styled.button`
     width: 100%;
     /* display: block; */
     margin: 10px;
-    /* margin-left: auto;
-    margin-right: auto; */
+    margin-left: auto;
+    margin-right: auto; 
     cursor: pointer;
     border: none;
     border-radius: 1rem;
     /* scale: 1.6; */
-    box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;    
-    /* background-color: transparent; */
-    background-color: white;
+    /* box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;     */
+    background-color: transparent;
+    /* background-color: white; */
 
     & :hover {
         transform: rotate(-180deg);
@@ -80,6 +86,7 @@ export default function Userbase (props) {
         handleSubmit,
         formState: { errors, isValid }
     } = useForm({ mode: "all" });   
+    const [showPassword, setShowPassword] = useState(false);
 
     const addAdminStyle = { 
         marginTop: '5px',
@@ -213,13 +220,40 @@ export default function Userbase (props) {
                     }
                 })}
             />
-            <TextField 
+            {/* <TextField 
                 name="password" 
                 label="Password *" 
                 variant="outlined" 
                 fullWidth={false} 
                 error={!!errors.password}
                 helperText={!!errors.password ? errors.password.message : ''} 
+                {...register("password", { 
+                    required: "Please Enter A Password",
+                    minLength: {
+                        value: 8,
+                        message: "Password Must Contain Atleast 8 Characters"                            
+                    }
+                })}
+            /> */}
+            <TextField
+                name="password" 
+                label="Password *" 
+                variant="outlined"
+                error={!!errors.password}
+                helperText={!!errors.password ? errors.password.message : ''} 
+                type={showPassword ? "text" : "password"} 
+                fullWidth={false} 
+                InputProps={{ 
+                    endAdornment: (
+                    <InputAdornment position="end">
+                        <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                    </InputAdornment>
+                    )
+                }}
                 {...register("password", { 
                     required: "Please Enter A Password",
                     minLength: {

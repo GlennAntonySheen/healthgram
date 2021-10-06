@@ -129,6 +129,7 @@ const expandingTransition = {
 };
 
 export function AccountBox(props) {
+    document.title = "Login / Register"
     const [isExpanded, setExpanded] = useState(false);
     const [active, setActive] = useState(props.type);
 

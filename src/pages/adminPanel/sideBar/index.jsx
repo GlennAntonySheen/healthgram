@@ -184,7 +184,7 @@ const Profile = styled.div`
         bottom: 5px;
         left: ${ props => props.isActive ? '88%' : '50%' };
         /* left: 88%; */
-        transform: translateX(-50%);
+        transform: translateX(-68%);
         min-width: 50px;
         line-height: 50px;
         font-size: 26px;

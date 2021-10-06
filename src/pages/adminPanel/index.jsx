@@ -14,8 +14,10 @@ const AdminPanelWrapper = styled.div`
 `;
 
 export function AdminPanel (props) {
+    document.title = "Admin Panel"
+
     const [ active, setActive ] = useState(false);
-    const [menu, setMenu] = useState('doctorCategory');
+    const [menu, setMenu] = useState('userbase');
 
     return <AdminPanelWrapper>
         <SideBar isActive={active} setActive={setActive} setMenu={setMenu} />     
