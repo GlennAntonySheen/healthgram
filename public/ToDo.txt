@@ -6,3 +6,6 @@
 * Add specialization in admin pannel
 * Add badge to icons in navbar of admin pannel
 * Card in booking, text vobbles on hover animation 
+* display number of rejections of booking by doctor in admin pannel
+* Block logined users to login again
+* Show total number of users in admin pannel

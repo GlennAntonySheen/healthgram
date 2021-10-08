@@ -17,6 +17,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import { styled as alias} from '@mui/material/styles';
 import Lottie from 'react-lottie';
+import BookedAnimation from '../../assets/lottie animations/book-an-appointment.json'
+import CurrentlyUnavailable from '../../assets/lottie animations/no-connection.json'
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import DefaultDoctorProfilePicture from '../../assets/images/defaultDoctorProfilePicture.jpg'
@@ -25,6 +27,7 @@ import DoctorVirtualCall from '../../assets/lottie animations/doctor-virtual-cal
 import BackgroungImg from '../../assets/images/booking backgroung.jpg'
 import SearchIcon from '../../assets/icons/searchdoctor.svg'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { SignalCellularNullTwoTone } from '@mui/icons-material';
 
 const BookingPageContainer = styled.div`
     width: 100vw;
@@ -260,8 +263,10 @@ export function Booking(props) {
     const [activeStep, setActiveStep] = useState(0)
     const [priceRange, setPriceRange] = useState([0, 9999])
     const [doctors, setDoctors] = useState([])
-    const [doctorToBook, setDoctorToBook] = useState(null)
+    const [bookingDetails, setBookingDetails] = useState(null)
+    const [bookingStatus, setBookingStatus] = useState('')
     const [openDialogue, setOpenDialogue] = useState(false)
+    const [progress, setProgress] = useState(100)
 
     const { 
         watch, 
@@ -307,8 +312,51 @@ export function Booking(props) {
         setDoctors(table)
     }
 
-    const requestDoctorConfirmation = async (doctor) => {
-        console.log(doctor)
+    useEffect(() => {
+        if (activeStep == 1) {
+            const timer = setInterval(async () => {            
+                let response= await fetch("http://localhost/healthgram/test.php",{
+                    method:"POST",
+                    header:{"Content-Type": "application/json"},
+                    body:JSON.stringify({"query":`SELECT * FROM tbl_booking WHERE tbl_booking.Booking_Id = ${bookingDetails[0].Booking_Id };`})
+                });
+                let table = await response.json();
+                // console.log(`SELECT * FROM tbl_booking WHERE tbl_booking.Booking_Id = ${bookingDetails[0].Booking_Id };`)
+
+                console.log('table is: ', bookingDetails)
+
+                if (progress > 0 && table[0].Booking_Status == 'not confirmed') {         
+                    setProgress((prevProgress) => prevProgress - 5);                    
+                } else if (table[0].Booking_Status == 'confirmed') { 
+                    clearInterval(timer);
+                    setBookingStatus('confirmed'); 
+                    setTimeout(() => {
+                        setOpenDialogue(false)            
+                        setActiveStep(2)
+                    }, 3000);        
+                } else if (table[0].Booking_Status == 'rejected') { 
+                    clearInterval(timer);
+                    setBookingStatus('rejected');
+                }else {
+                    clearInterval(timer);
+                    setBookingStatus('rejected');
+                    cancelBooking()
+                }
+            
+            }, 1000);
+            return () => {
+                clearInterval(timer);
+            };
+        } 
+    }, [activeStep, progress, bookingDetails]);
+
+    const BookDoctor = async (doctor) => {
+        setBookingStatus('not confirmed')
+        setOpenDialogue(true)
+        setProgress(100)
+        // requestDoctorConfirmation(doctor) 
+
+
         let response= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
@@ -318,13 +366,29 @@ export function Booking(props) {
                 INSERT INTO tbl_payment (Pay_Id, Card_Id, Pay_Amount, Pay_Status) VALUES (NULL, (SELECT MAX(Card_Id) FROM tbl_card), NULL, 'not paid');
                 INSERT INTO tbl_booking (Booking_Id, Pat_Id, Doc_Id, Pres_Id, Pay_Id, Booking_Amount, Booking_Date, Booking_Status) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), '${doctor.Doc_Id}', (SELECT MAX(Pres_Id) FROM tbl_prescription), (SELECT MAX(Pay_Id) FROM tbl_payment), '${doctor.Doc_Fee}', current_timestamp(), 'not confirmed');`})
         });
+        let bookingid= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":` SELECT * FROM tbl_booking WHERE Booking_Id=(SELECT MAX(Booking_Id) FROM tbl_booking);`})
+        });
+
+        setActiveStep(1)
+        let table = await bookingid.json();
+        setBookingDetails(table);
+    }
+
+    const cancelBooking = async () => {
+        setActiveStep(0)    
+
+        let response= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`UPDATE tbl_booking SET Booking_Status = 'cancelled' WHERE tbl_booking.Booking_Id = ${bookingDetails[0].Booking_Id };`})
+        });
         let table = await response.json();
-        console.log(`
-        INSERT INTO tbl_prescription (Pres_Id, Doc_Id, Pres_Date, Prescription) VALUES (NULL, '${doctor.Doc_Id}', NULL, NULL); 
-        INSERT INTO tbl_card (Card_Id, Pat_Id, Card_No, Card_Exp_Date, Card_Type) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), NULL, NULL, NULL); 
-        INSERT INTO tbl_payment (Pay_Id, Card_Id, Pay_Amount, Pay_Status) VALUES (NULL, (SELECT MAX(Card_Id) FROM tbl_card), NULL, 'not paid');
-        INSERT INTO tbl_booking (Booking_Id, Pat_Id, Doc_Id, Pres_Id, Pay_Id, Booking_Amount, Booking_Date, Booking_Status) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), '${doctor.Doc_Id}', (SELECT MAX(Pres_Id) FROM tbl_prescription), (SELECT MAX(Pay_Id) FROM tbl_payment), '${doctor.Doc_Fee}', current_timestamp(), 'not confirmed');`);
-        // setDoctors(table)
+        setBookingDetails(null)
+                            
+        console.log('bookingDetails: ', bookingDetails[0])  
     }
 
     function currencyFormat(num) {
@@ -334,7 +398,6 @@ export function Booking(props) {
     function fn() {
         console.log('doctor')
     }
-    
 
     return <BookingPageContainer>        
         <IntroContainer>
@@ -389,7 +452,7 @@ export function Booking(props) {
                                                 handleSubmit(searchForDoctor)()
                                             }
                                         }>
-                                            <FormControlLabel value="%%" control={<Radio />} label="Both"/>
+                                            <FormControlLabel value="%%" control={<Radio />} label="All"/>
                                             <FormControlLabel value="male" control={<Radio />} label="Male"/>
                                             <FormControlLabel value="female" control={<Radio />} label="Female"/>
                                         </RadioGroup>
@@ -461,15 +524,8 @@ export function Booking(props) {
                                     <Button 
                                         variant="contained" 
                                         startIcon={<FavoriteBorderIcon />} 
-                                        docId={doctor.Doc_Id}
-                                        onClick={ () => {
-                                            // setDoctorToBook(doctor)
-                                            setOpenDialogue(true)
-                                            setActiveStep(1)      
-                                            requestDoctorConfirmation(doctor)                                      
-                                        }}>
-                                        Book Now
-                                    </Button>
+                                        onClick={ () => BookDoctor(doctor)}
+                                    >Book Now</Button>
                                 </DoctorBook>
                             </CardTextContainer> 
                         </Card>
@@ -478,28 +534,67 @@ export function Booking(props) {
             </> }
             <Dialog open={openDialogue}>
                 <BookingConfirmation>
-                    <Lottie 
-                        options={{
-                            loop: true,
-                            autoplay: true,
-                            animationData: DoctorVirtualCall,
-                            rendererSettings: {
-                                preserveAspectRatio: "xMidYMid slice"
-                            }
-                        }}
-                        height={300}
-                        width={600}
-                        /> 
-                        <LinearProgress variant="buffer" value={50} valueBuffer={50} sx={{ my: 2 }} />
-                        <DialogTitle>Please wait till the doctor confirms the booking</DialogTitle>
-                    <Button 
-                        variant="contained" 
-                        sx={{ mx: 28, my: 2 }} 
-                        onClick={ async () => {
-                            setOpenDialogue(false)    
-                            setActiveStep(0)                                                   
-                        }}
-                    >Cancel</Button>
+                    {bookingStatus == 'not confirmed' && <>
+                        <Lottie 
+                            options={{
+                                loop: true,
+                                autoplay: true,
+                                animationData: DoctorVirtualCall,
+                                rendererSettings: {
+                                    preserveAspectRatio: "xMidYMid slice"
+                                }
+                            }}
+                            height={300}
+                            width={600}
+                            /> 
+                            <LinearProgress variant="buffer" value={progress} valueBuffer={progress} sx={{ my: 2 }} />
+                            <DialogTitle>Please wait till the doctor confirms the booking</DialogTitle>
+                        <Button 
+                            variant="contained" 
+                            sx={{ mx: 28, my: 2 }} 
+                            onClick={ async () => { 
+                                cancelBooking()      
+                                setOpenDialogue(false)                                          
+                            }}
+                        >Cancel</Button>
+                    </>}
+                    {bookingStatus == 'confirmed' && <>
+                        <Lottie 
+                            options={{
+                                loop: false,
+                                autoplay: true,
+                                animationData: BookedAnimation,
+                                rendererSettings: {
+                                    preserveAspectRatio: "xMidYMid slice"
+                                }
+                            }}
+                            height={700}
+                            width={450}
+                            /> 
+                    </>}
+                    {bookingStatus == 'rejected' && <>
+                        <Lottie 
+                            options={{
+                                loop: true,
+                                autoplay: true,
+                                animationData: CurrentlyUnavailable,
+                                rendererSettings: {
+                                    preserveAspectRatio: "xMidYMid slice"
+                                }
+                            }}
+                            height={300}
+                            width={400}
+                            /> 
+                            <DialogTitle>The Doctor is Currently Unavailable, Please Try Another Doctor</DialogTitle>
+                        <Button 
+                            variant="contained" 
+                            sx={{ mx: 28, my: 2 }} 
+                            onClick={ () => {  
+                                setOpenDialogue(false)            
+                                setActiveStep(0)                                          
+                            }}
+                        >Okay</Button>
+                    </>}
                 </BookingConfirmation>
             </Dialog>
             { activeStep == 2 && <>
@@ -509,7 +604,7 @@ export function Booking(props) {
             </> }
             {/* {JSON.stringify(watch(), null, 20)} */}
             {/* <pre style={{maxWidth: "900px"}}>{JSON.stringify(doctors, null, 2)}</pre> */}
-            {/* <button onClick={() => requestDoctorConfirmation()}>fjjt</button> */}
+            <button onClick={() => console.log(bookingDetails)}>fjjt</button>
         </BookingSection> 
     </BookingPageContainer>
 }

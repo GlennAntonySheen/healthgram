@@ -243,8 +243,8 @@ export function DoctorRegistrationForm (props) {
                         {...register("dob", { 
                             required: "Please Enter Your Date Of Birth",
                             pattern: {
-                                value: /^(19[2-9][0-9]|200[0-5])-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
-                                message: "Enter a valid date in the format YYYY-MM-DD (NOTE: You must be 16 years old or more"
+                                value: /^(19[2-9][0-9]|2000)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
+                                message: "Enter a valid date in the format YYYY-MM-DD"
                             }})
                         }
                     />

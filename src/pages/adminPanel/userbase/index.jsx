@@ -62,7 +62,7 @@ const AddAdmin = styled.div`
     justify-content: space-around;
     align-items: center;
     margin-top: 20px;
-    box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
+    box-shadow: 0 9px 24px rgb(0 0 0 / 12%), 0 9px 24px rgb(0 0 0 / 12%);
     border-radius: 1rem;    
     padding: 20px;
     transition: 12s  ease-in-out;
@@ -148,29 +148,6 @@ export default function Userbase (props) {
                     search: true,                   
                     exportButton: true
                 }} 
-                editable={{    
-                                    
-                    // onRowAdd: async (newData) => {
-                    //     console.log(newData);
-                    //     let response= await fetch("http://localhost/healthgram/test.php",{
-                    //         method:"POST",
-                    //         header:{"Content-Type": "application/json"},
-                    //         body:JSON.stringify({"query":`INSERT INTO tbl_userbase(Username, Password, User_Type, User_Status) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]');`})
-                    //     });
-                    //     let table = await response.json();
-                    //     getUserDetails();
-                    // }
-                    // new Promise((resolve, reject) => {
-                    //   setTimeout(() => {
-                    //     {
-                    //       const data = this.state.data;
-                    //       data.push(newData);
-                    //       this.setState({ data }, () => resolve());
-                    //     }
-                    //     resolve()
-                    //   }, 1000)
-                    // })
-                }}
                 actions={[
                     rowData => ({
                         icon: () => <RemoveCircleOutlineOutlinedIcon fontSize={'medium'} />,

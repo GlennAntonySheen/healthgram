@@ -118,11 +118,13 @@ export function Navbar(props) {
     const history = useHistory();
 
     const logout = async () => {
+        console.log('dfbdfb')
         let response = await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`UPDATE tbl_login SET Logout_Time=CURRENT_TIMESTAMP WHERE Logout_Time IS NULL AND Username='${sessionStorage.getItem('Username')}' ORDER BY Login_Time DESC LIMIT 1; ;`})
         });
+        console.log(`UPDATE tbl_login SET Logout_Time=CURRENT_TIMESTAMP WHERE Logout_Time IS NULL AND Username='${sessionStorage.getItem('Username')}' ORDER BY Login_Time DESC LIMIT 1; ;`)
         sessionStorage.removeItem('Username')
         sessionStorage.removeItem('UserType')
         history.push('./home');
@@ -150,7 +152,17 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                     to="/home" 
                     scroll={scroll} 
                     opaque={props.opaque}
-                    onClick={ () => logout}
+                    onClick={ () => logout()}
+                >
+                    <h2>Log Out</h2><h3><LogoutIcon /></h3>
+                </AccessibilityItem>
+            </Accessibility> }
+            {(props.type == 'doctor') && <Accessibility>
+                <AccessibilityItem 
+                    to="/home" 
+                    scroll={scroll} 
+                    opaque={props.opaque}
+                    onClick={ () => logout()}
                 >
                     <h2>Log Out</h2><h3><LogoutIcon /></h3>
                 </AccessibilityItem>
