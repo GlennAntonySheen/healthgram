@@ -1,4 +1,3 @@
-* doctoer specialization must be read fro db
 * Ui for successful registration of doctor and patient
 * Add snakbar to all register page
 * Add a delay for showing names when sidebar in admin panel is expanded
@@ -9,3 +8,8 @@
 * display number of rejections of booking by doctor in admin pannel
 * Block logined users to login again
 * Show total number of users in admin pannel
+* Add date picker to doctor and patient registration
+* Help file
+* Show details of doctor and patient in admin panel >> booking
+* Datewise filter in admin panel
+* Add place holder to field in addNewCard dialog

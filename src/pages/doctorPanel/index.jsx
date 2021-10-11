@@ -46,6 +46,16 @@ const IsConsulting = styled.div`
     }
 `;
 
+const TokenContainer = styled.div`
+    height: fit-content;
+    width: 300px;
+    margin: 20px;
+    padding:30px;
+    display: flex;
+    flex-direction: column;
+
+`;
+
 const BookingRequests = styled.div`
     height: fit-content;
     width: fit-content;
@@ -109,6 +119,7 @@ export function DoctorPanel (props) {
     const [showTokens, setShowTokens] = useState(false)
     const [noOfTokens, setNoOfTokens] = useState(1)
     const [bookingRequests, setBookingRequest] = useState([])
+    const [tokens, setTokens] = useState(0)
 
     const checkBookingRequest = async () => {
         let response = await fetch("http://localhost/healthgram/test.php", {

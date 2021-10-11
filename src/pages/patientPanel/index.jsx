@@ -35,7 +35,9 @@ const FloatingButton = styled(Link)`
     }
 `;
                                                                                                                                 
-export function PatientPanel (props) {
+export function PatientPanel (props) {    
+    document.title = "Patient Panel"
+
     window.addEventListener("scroll", () => console.log("hello"));
     return <PatientPanelWrapper>Patient Panel
         

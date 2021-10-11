@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import styled from 'styled-components';
+import AddCard from './addNewCard';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import FormControl from "@material-ui/core/FormControl";
@@ -12,8 +14,13 @@ import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector
 import Slider from '@mui/material/Slider';
 import LinearProgress from '@mui/material/LinearProgress';
 import Radio from '@mui/material/Radio';
+import IconButton from '@mui/material/IconButton';
 import RadioGroup from '@mui/material/RadioGroup';
+import Tooltip from '@mui/material/Tooltip';
+import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import PaymentIcon from '@mui/icons-material/Payment';
+import CircularProgress from '@mui/material/CircularProgress';
 import FormLabel from '@mui/material/FormLabel';
 import { styled as alias} from '@mui/material/styles';
 import Lottie from 'react-lottie';
@@ -21,13 +28,16 @@ import BookedAnimation from '../../assets/lottie animations/book-an-appointment.
 import CurrentlyUnavailable from '../../assets/lottie animations/no-connection.json'
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
 import DefaultDoctorProfilePicture from '../../assets/images/defaultDoctorProfilePicture.jpg'
+import CardImg from '../../assets/images/card-payment.jpg'
 import animationData from '../../assets/lottie animations/49259-scroll-s.json';
 import DoctorVirtualCall from '../../assets/lottie animations/doctor-virtual-call.json';
+import PaymentSuccessful from '../../assets/lottie animations/card-payment.json';
 import BackgroungImg from '../../assets/images/booking backgroung.jpg'
 import SearchIcon from '../../assets/icons/searchdoctor.svg'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { SignalCellularNullTwoTone } from '@mui/icons-material';
+
 
 const BookingPageContainer = styled.div`
     width: 100vw;
@@ -255,11 +265,129 @@ const BookingConfirmation = styled.div`
     /* background-color: pink; */
 `;
 
+const PaymentWrapper = styled.div`
+    height: 500px;
+    /* width: 100%; */
+    padding: 70px 30px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    /* background-color: green; */
+`;
 
+const PayBackgroungImage = styled.img`
+    /* height: fit-content ;
+    width: fit-content; */
+    /* flex: 1; */
+    background-color: #f3f3c3;
+    /* img { */
+        height: 70%;
+        width: 35%;
+    /* } */
+`;
+
+const PamentDetails = styled.div`
+    width: 560px;
+    display: flex;
+    /* flex: 1; */
+    padding: 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    box-shadow: 0 9px 24px rgb(0 0 0 / 12%), 0 9px 24px rgb(0 0 0 / 12%);
+    background-color: white;
+`;
+
+const PaymentHeader = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background-color: red; */
+
+    span {
+        margin: 10px 30px;
+        /* font-size: .9rem; */
+    }
+`;
+
+const UserSummary = styled.div`
+    /* width: 100%; */
+    margin: 8px 15px;
+    padding: 10px 30px 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border: 2px solid #1976d2;
+    border-radius: 1rem;
+    /* background-color: pink; */
+
+    span {
+        width: 100%;
+        margin: 5px 2px -5px;
+        /* display: inline-block; */
+        /* background-color: blue; */
+    }
+`;
+
+const PaymentFooter = styled.div`
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-sizing: border-box;
+    /* background-color: blue; */
+`;
+
+const PaymentCardContainer = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    /* background-color: violet; */
+`;
+
+
+const PaymentConfirmationButton = styled.button`
+    /* height: 40px; */
+    width: fit-content;
+    /* margin-bottom: 10px; */
+    padding: 8px 10%;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 500;
+    border: none;
+    border-radius: 100px 100px 100px 100px;
+    cursor:  ${ props => props.currentCard == null  ? 'not-allowed' : 'pointer' };
+    transition: all, 240ms ease-in-out;
+    background: rgb(0,109,182);
+    background: linear-gradient(
+        90deg, 
+        rgba(0,109,182,1) 0%, 
+        rgba(9,57,121,1) 100%);
+
+    &:hover {
+        filter: brightness(1.03);
+    }
+`;
+
+const PaymentCompleted = styled.div`
+    height: 500px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* background: lightblue; */
+`;
 
 export function Booking(props) {
     document.title = "Booking"
-    
+
+    const history = useHistory();
     const [activeStep, setActiveStep] = useState(0)
     const [priceRange, setPriceRange] = useState([0, 9999])
     const [doctors, setDoctors] = useState([])
@@ -267,6 +395,9 @@ export function Booking(props) {
     const [bookingStatus, setBookingStatus] = useState('')
     const [openDialogue, setOpenDialogue] = useState(false)
     const [progress, setProgress] = useState(100)
+    const [paymentDetails, setPaymentDetails] = useState([])
+    const [addCardDialog, setAddCardDialog] = useState(false)
+    const [currentCard, setCurrentCard] = useState(null)
 
     const { 
         watch, 
@@ -277,6 +408,42 @@ export function Booking(props) {
         setValue,
         formState: { errors, isValid }
     } = useForm({ mode: "all", reValidateMode: "all" });   
+ 
+    const [open, setOpen] = React.useState(false);
+    const [options, setOptions] = React.useState([]);
+    const loading = open && options.length === 0;
+      
+    React.useEffect(() => {
+        let active = true;
+
+        if (!loading) {
+        return undefined;
+        }
+
+        (async () => {
+            let response= await fetch("http://localhost/healthgram/test.php",{
+                method:"POST",
+                header:{"Content-Type": "application/json"},
+                body:JSON.stringify({"query":`SELECT * FROM tbl_card WHERE Pat_Id=${paymentDetails[0].Pat_Id};`})
+            });
+            let table = await response.json();
+            if (table.length == 0) {
+                setOptions([{ Card_No: 'You Havn\'t Saved Any Cards Yet.' }]);
+            } else {
+                setOptions(table);
+            }
+        })();
+
+        return () => {
+        active = false;
+        };
+    }, [loading]);
+
+    React.useEffect(() => {
+        if (!open) {
+        setOptions([]);
+        }
+    }, [open]);
 
     const QontoConnector = alias(StepConnector)(({ theme }) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -321,15 +488,13 @@ export function Booking(props) {
                     body:JSON.stringify({"query":`SELECT * FROM tbl_booking WHERE tbl_booking.Booking_Id = ${bookingDetails[0].Booking_Id };`})
                 });
                 let table = await response.json();
-                // console.log(`SELECT * FROM tbl_booking WHERE tbl_booking.Booking_Id = ${bookingDetails[0].Booking_Id };`)
-
-                console.log('table is: ', bookingDetails)
 
                 if (progress > 0 && table[0].Booking_Status == 'not confirmed') {         
                     setProgress((prevProgress) => prevProgress - 5);                    
                 } else if (table[0].Booking_Status == 'confirmed') { 
                     clearInterval(timer);
                     setBookingStatus('confirmed'); 
+                    getPaymentDetails()
                     setTimeout(() => {
                         setOpenDialogue(false)            
                         setActiveStep(2)
@@ -354,17 +519,12 @@ export function Booking(props) {
         setBookingStatus('not confirmed')
         setOpenDialogue(true)
         setProgress(100)
-        // requestDoctorConfirmation(doctor) 
-
 
         let response= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
-            body:JSON.stringify({"query":`
-                INSERT INTO tbl_prescription (Pres_Id, Doc_Id, Pres_Date, Prescription) VALUES (NULL, '${doctor.Doc_Id}', NULL, NULL); 
-                INSERT INTO tbl_card (Card_Id, Pat_Id, Card_No, Card_Exp_Date, Card_Type) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), NULL, NULL, NULL); 
-                INSERT INTO tbl_payment (Pay_Id, Card_Id, Pay_Amount, Pay_Status) VALUES (NULL, (SELECT MAX(Card_Id) FROM tbl_card), NULL, 'not paid');
-                INSERT INTO tbl_booking (Booking_Id, Pat_Id, Doc_Id, Pres_Id, Pay_Id, Booking_Amount, Booking_Date, Booking_Status) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), '${doctor.Doc_Id}', (SELECT MAX(Pres_Id) FROM tbl_prescription), (SELECT MAX(Pay_Id) FROM tbl_payment), '${doctor.Doc_Fee}', current_timestamp(), 'not confirmed');`})
+            body:JSON.stringify({"query":`INSERT INTO tbl_prescription (Pres_Id, Doc_Id, Pres_Date, Prescription) VALUES (NULL, '${doctor.Doc_Id}', NULL, NULL);                 
+                INSERT INTO tbl_booking (Booking_Id, Pat_Id, Doc_Id, Pres_Id, Booking_Amount, Booking_Date, Booking_Status) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), '${doctor.Doc_Id}', (SELECT MAX(Pres_Id) FROM tbl_prescription), '${doctor.Doc_Fee}', current_timestamp(), 'not confirmed');`})
         });
         let bookingid= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
@@ -375,6 +535,7 @@ export function Booking(props) {
         setActiveStep(1)
         let table = await bookingid.json();
         setBookingDetails(table);
+        console.log('bookingDetails is ', bookingDetails)
     }
 
     const cancelBooking = async () => {
@@ -388,15 +549,41 @@ export function Booking(props) {
         let table = await response.json();
         setBookingDetails(null)
                             
-        console.log('bookingDetails: ', bookingDetails[0])  
+        console.log('booking canceled')  
+    }
+    
+    const getPaymentDetails = async () => {
+        let response= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`SELECT Booking_Id, tbl_booking.Pat_Id, tbl_booking.Doc_Id, Pres_Id, Booking_Amount, Booking_Date, Booking_Status, tbl_patient.Username AS Pat_Username, Pat_Name, Pat_Phone_No, Pat_Gender, Sp_Name, tbl_doctor.Username AS Doc_Username, Doc_Name, Doc_Phone_No, Doc_Gender, Doc_Fee FROM tbl_booking JOIN tbl_patient ON tbl_patient.Pat_Id = tbl_booking.Pat_Id JOIN tbl_doctor ON tbl_doctor.Doc_Id=tbl_booking.Doc_Id JOIN tbl_doctor_category on tbl_doctor_category.Sp_Id=tbl_doctor.Sp_Id WHERE tbl_booking.Booking_Id=${bookingDetails[0].Booking_Id}`})
+        });
+        let table = await response.json();
+        setPaymentDetails(table)
+        console.log('Got payment details')
+        console.log(paymentDetails)
+    }
+    
+    const makePayment = async () => {
+        let response= await fetch("http://localhost/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`INSERT INTO tbl_payment(Pay_Id, Card_Id, Pay_Amount, Pay_Status, Booking_Id) VALUES (NULL, (SELECT Card_Id FROM tbl_card WHERE Card_No='${currentCard}'), ${paymentDetails[0].Booking_Amount},'paid', ${paymentDetails[0].Booking_Id})`})
+        });
+        let table = await response.json();
+        setActiveStep(3)
+        setTimeout(() => {
+            history.push('./patient')
+        }, 3000);  
     }
 
     function currencyFormat(num) {
         return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
-    function fn() {
-        console.log('doctor')
+    function calcAmount(amount) {
+        amount = parseInt(amount)
+        return Math.round(amount + ((amount/100)*3))
     }
 
     return <BookingPageContainer>        
@@ -546,7 +733,7 @@ export function Booking(props) {
                             }}
                             height={300}
                             width={600}
-                            /> 
+                            />
                             <LinearProgress variant="buffer" value={progress} valueBuffer={progress} sx={{ my: 2 }} />
                             <DialogTitle>Please wait till the doctor confirms the booking</DialogTitle>
                         <Button 
@@ -584,8 +771,8 @@ export function Booking(props) {
                             }}
                             height={300}
                             width={400}
-                            /> 
-                            <DialogTitle>The Doctor is Currently Unavailable, Please Try Another Doctor</DialogTitle>
+                        /> 
+                        <DialogTitle>The Doctor is Currently Unavailable, Please Try Another Doctor</DialogTitle>
                         <Button 
                             variant="contained" 
                             sx={{ mx: 28, my: 2 }} 
@@ -598,13 +785,156 @@ export function Booking(props) {
                 </BookingConfirmation>
             </Dialog>
             { activeStep == 2 && <>
-                <BookingConfirmation>
-                    {/* {doctorToBook} */}
-                </BookingConfirmation>
+                <PaymentWrapper>                   
+                    <PayBackgroungImage src={CardImg} ></PayBackgroungImage>
+                    {/* <button onClick={ () => calcAmount(paymentDetails[0].Booking_Amount)}>dfb</button> */}
+                    <PamentDetails>
+                        <PaymentHeader>
+                            <span>Booking ID: {paymentDetails[0].Booking_Id}</span>
+                            <span>Timestamp: {paymentDetails[0].Booking_Date}</span>
+                        </PaymentHeader>
+                        <UserSummary>
+                            <span>Doctor Details</span>
+                            <TextField
+                                label="Name"
+                                value={paymentDetails[0].Doc_Name}
+                                focused
+                                size="small"
+                                margin='normal'
+                                InputProps={{ readOnly: true, }}
+                                variant="outlined"
+                                sx={{m: '100px'}}
+                            />
+                            <TextField
+                                label="Email ID"
+                                value={paymentDetails[0].Doc_Username}
+                                focused
+                                size="small"
+                                margin='normal'
+                                InputProps={{ readOnly: true, }}
+                                sx={{mb: 10}}
+                            />
+                            <TextField
+                                label="Gender"
+                                value={paymentDetails[0].Doc_Gender.toUpperCase()}
+                                focused
+                                size="small"
+                                margin='normal'
+                                InputProps={{ readOnly: true, }}
+                                sx={{mb: 10}}
+                            />
+                            <TextField
+                                label="Specializaation"
+                                value={paymentDetails[0].Sp_Name.toUpperCase()}
+                                focused
+                                size="small"
+                                margin='normal'
+                                InputProps={{ readOnly: true, }}
+                                sx={{mb: 10}}
+                            />
+                        </UserSummary>                        
+                        <UserSummary>
+                            <span>Your Details</span>
+                            <TextField
+                                label="Name"
+                                value={paymentDetails[0].Pat_Name}
+                                focused
+                                size="small"
+                                margin='normal'
+                                InputProps={{ readOnly: true, }}
+                            />
+                            <TextField
+                                label="Email ID"
+                                value={paymentDetails[0].Pat_Username}
+                                focused
+                                size="small"
+                                margin='normal'
+                                InputProps={{ readOnly: true, }}
+                            />
+
+                            <PaymentCardContainer>                            
+                                <Autocomplete
+                                    size="small"
+                                    margin='normal'
+                                    fullWidth={true}
+                                    open={open}
+                                    onOpen={() => {
+                                        setOpen(true);
+                                    }}
+                                    onClose={() => {
+                                        setOpen(false);
+                                    }}
+                                    onInputChange={(e, value, reason) => {
+                                        setCurrentCard(value);
+                                    }}
+                                    getOptionLabel={(option) => option.Card_No}
+                                    options={options}
+                                    loading={loading}
+                                    renderInput={(params) => (
+                                        <TextField
+                                        {...params}
+                                        label="Select Card *"
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            endAdornment: (
+                                            <React.Fragment>
+                                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                {params.InputProps.endAdornment}
+                                            </React.Fragment>
+                                            ),
+                                        }}
+                                        />
+                                    )}
+                                />
+                                <Tooltip title="Add New Card">
+                                    <IconButton color="primary" onClick={() => setAddCardDialog(true)}size="large">
+                                        <PaymentIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </PaymentCardContainer>
+
+
+
+                        </UserSummary>
+                        <UserSummary>
+                            <span>Booking Amount:  ₹{calcAmount(paymentDetails[0].Booking_Amount)}</span>
+                        </UserSummary>
+                        <PaymentFooter>
+                            <PaymentConfirmationButton 
+                                disabled={currentCard == null}
+                                currentCard={currentCard}
+                                onClick={() => makePayment()}
+                            >Confirm Payment</PaymentConfirmationButton>
+                            <PaymentConfirmationButton 
+                                currentCard={true}
+                                onClick={async () => cancelBooking()}
+                            >Cancel</PaymentConfirmationButton>
+                        </PaymentFooter>
+                    </PamentDetails>
+                    <AddCard addCardDialog={addCardDialog} setAddCardDialog={setAddCardDialog} patId={paymentDetails[0].Pat_Id} PayId={paymentDetails[0].Pay_Id}/>
+                    
+                </PaymentWrapper>
             </> }
+            { activeStep == 3 && <>
+                <PaymentCompleted>                
+                    <Lottie 
+                        options={{
+                            loop: false,
+                            autoplay: true,
+                            animationData: PaymentSuccessful,
+                            rendererSettings: {
+                                preserveAspectRatio: "xMidYMid slice"
+                            }
+                        }}
+                        height={560}
+                        width={570}
+                    />
+                </PaymentCompleted>
+            </>}
             {/* {JSON.stringify(watch(), null, 20)} */}
             {/* <pre style={{maxWidth: "900px"}}>{JSON.stringify(doctors, null, 2)}</pre> */}
-            <button onClick={() => console.log(bookingDetails)}>fjjt</button>
+            {/* <button onClick={() => getPaymentDetails()}>fjjt</button> */}
         </BookingSection> 
+    
     </BookingPageContainer>
 }

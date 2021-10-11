@@ -9,5 +9,7 @@ const PageWrapper = styled.div`
 `;
 
 export function Home (props) {
+    document.title = "HealthGram - Home"
+
     return <PageWrapper><Intro/></PageWrapper>
 }
