@@ -13,3 +13,4 @@
 * Show details of doctor and patient in admin panel >> booking
 * Datewise filter in admin panel
 * Add place holder to field in addNewCard dialog
+* ReInitialize fields in addNewCard dialog while closing 
