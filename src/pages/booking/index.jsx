@@ -787,7 +787,6 @@ export function Booking(props) {
             { activeStep == 2 && <>
                 <PaymentWrapper>                   
                     <PayBackgroungImage src={CardImg} ></PayBackgroungImage>
-                    {/* <button onClick={ () => calcAmount(paymentDetails[0].Booking_Amount)}>dfb</button> */}
                     <PamentDetails>
                         <PaymentHeader>
                             <span>Booking ID: {paymentDetails[0].Booking_Id}</span>
@@ -873,7 +872,7 @@ export function Booking(props) {
                                     renderInput={(params) => (
                                         <TextField
                                         {...params}
-                                        label="Select Card *"
+                                        label="Select Card Number *"
                                         InputProps={{
                                             ...params.InputProps,
                                             endAdornment: (
@@ -892,9 +891,6 @@ export function Booking(props) {
                                     </IconButton>
                                 </Tooltip>
                             </PaymentCardContainer>
-
-
-
                         </UserSummary>
                         <UserSummary>
                             <span>Booking Amount:  ₹{calcAmount(paymentDetails[0].Booking_Amount)}</span>
@@ -907,7 +903,10 @@ export function Booking(props) {
                             >Confirm Payment</PaymentConfirmationButton>
                             <PaymentConfirmationButton 
                                 currentCard={true}
-                                onClick={async () => cancelBooking()}
+                                onClick={async () => {
+                                    cancelBooking()
+                                    handleSubmit(searchForDoctor)()
+                                }}
                             >Cancel</PaymentConfirmationButton>
                         </PaymentFooter>
                     </PamentDetails>

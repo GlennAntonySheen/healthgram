@@ -4,6 +4,7 @@ import MaterialTable from 'material-table';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import CachedIcon from '@material-ui/icons/Cached';
 import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 
 const ContentWrapper = styled.div`
     width: 100%;
@@ -174,8 +175,8 @@ export default function Doctor(props) {
                         icon: () => <RemoveCircleOutlineOutlinedIcon fontSize={'medium'} />,
                         tooltip: 'Remove User',
                         disabled: rowData.User_Status == 'inactive',
+                        hidden: rowData.User_Status == 'inactive',
                         onClick: async (event, rowData) => {
-                            console.log(rowData.Doc_Id == 1)
                             let response= await fetch("http://localhost/healthgram/test.php",{
                                 method:"POST",
                                 header:{"Content-Type": "application/json"},
@@ -183,6 +184,21 @@ export default function Doctor(props) {
                             });
                             let table = await response.json();
                             console.log('table is: ', table);
+                            getDoctorDetails();
+                        }
+                    }),
+                    rowData => ({
+                        icon: () => <VolunteerActivismIcon fontSize={'medium'} />,
+                        tooltip: 'Activate User',
+                        disabled: rowData.User_Status == 'verified',
+                        hidden: rowData.User_Status == 'verified',
+                        onClick: async (event, rowData) => {
+                            let response= await fetch("http://localhost/healthgram/test.php",{
+                                method:"POST",
+                                header:{"Content-Type": "application/json"},
+                                body:JSON.stringify({"query":`UPDATE tbl_userbase SET User_Status = 'verified' WHERE tbl_userbase.Username = '${rowData.Username}';`})
+                            });
+                            let table = await response.json();
                             getDoctorDetails();
                         }
                     }),

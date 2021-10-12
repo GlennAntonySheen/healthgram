@@ -136,11 +136,14 @@ const RequestControls = styled.div`
 `;
 
 export function DoctorPanel (props) {
+    document.title = "Doctor Panel"
+
     const [showTokens, setShowTokens] = useState(false)
     const [noOfTokens, setNoOfTokens] = useState(1)
     const [bookingRequests, setBookingRequest] = useState([])
-    const [tokens, setTokens] = useState(0)
+    const [tokens, setTokens] = useState([{Doc_No_Of_Tokens: 0}])
 
+    
     const checkBookingRequest = async () => {
         let response = await fetch("http://localhost/healthgram/test.php", {
             method:"POST",
@@ -161,13 +164,11 @@ export function DoctorPanel (props) {
         let table = await response.json();
         setTokens(table)
     }
-
+    
     useEffect(() => {
-        document.title = "Doctor Panel"
         const interval = setInterval(() => {
-        //   console.log('This will run every second!');
-            checkBookingRequest()
             getNoOfTokens()
+            checkBookingRequest()
         }, 3000);
         return () => clearInterval(interval);
     }, []);
@@ -220,6 +221,7 @@ export function DoctorPanel (props) {
                                     header:{"Content-Type": "application/json"},
                                     body:JSON.stringify({"query": `UPDATE tbl_doctor SET Doc_No_Of_Tokens=${noOfTokens} WHERE Username='${sessionStorage.getItem('Username')}';`})
                                 })
+                                getNoOfTokens()
                             }}
                         >
                             <DoneIcon />
@@ -294,7 +296,7 @@ export function DoctorPanel (props) {
 
             )}
         </BookingRequests>
-        <button onClick={() => console.log(bookingRequests)} >fgnfgnfg</button>
+        {/* <button onClick={() => console.log(bookingRequests)} >fgnfgnfg</button> */}
             {/* {JSON.stringify(bookingRequests)} */}
 
     </DoctorPanelWrapper>
