@@ -6,6 +6,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import { Link } from 'react-router-dom';
 import LogoImg from '../../assets/logo/Technology to Customize Your Design _ GraphicSprings - Brave 20-Jun-21 11_44_14 AM.png';
+import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
 
 const Wrapper = styled.div`
     height: 80px;
@@ -55,7 +57,9 @@ const MiddleSection = styled.div`
     height: 100%;
     display: flex;
     flex: 1;
-    /* background-color: green; */
+    justify-content: center;
+    align-items: center;
+    background-color: red;
 `;
 
 const RightSection = styled.div`
@@ -74,7 +78,6 @@ const Accessibility = styled.div`
     justify-content: center;
     align-items: center;
     margin-right: 2rem;
-    /* background-color: red; */
 `;
 
 const AccessibilityItem = styled(Link)`
@@ -124,7 +127,6 @@ export function Navbar(props) {
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`UPDATE tbl_login SET Logout_Time=CURRENT_TIMESTAMP WHERE Logout_Time IS NULL AND Username='${sessionStorage.getItem('Username')}' ORDER BY Login_Time DESC LIMIT 1; ;`})
         });
-        console.log(`UPDATE tbl_login SET Logout_Time=CURRENT_TIMESTAMP WHERE Logout_Time IS NULL AND Username='${sessionStorage.getItem('Username')}' ORDER BY Login_Time DESC LIMIT 1; ;`)
         sessionStorage.removeItem('Username')
         sessionStorage.removeItem('UserType')
         history.push('./home');
@@ -139,7 +141,19 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                 <h1>HealthGram</h1>
             </LogoWrapper>
         </LeftSection>
-        <MiddleSection></MiddleSection>
+        <MiddleSection>
+            {(props.type == 'doctor') && <Accessibility>
+                {(() => console.log('started'))()}
+                <Chip
+                    avatar={<Avatar alt="D" src="/static/images/avatar/1.jpg" />}
+                    label="Avatar"
+                    variant="outlined"
+                />
+                {/* <button onClick={async () => {
+
+                }}>kdjfghkdjf</button> */}
+            </Accessibility> }
+        </MiddleSection>
         <RightSection>
             {(props.type == 'home') && <Accessibility>
                 <AccessibilityItem to="/registerPatient" scroll={scroll} opaque={props.opaque}><h2>Register</h2><h3>as Patient</h3></AccessibilityItem>

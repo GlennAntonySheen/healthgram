@@ -38,14 +38,22 @@ export function LoginInForm (props) {
             sessionStorage.setItem('Username', userbaseTable[0].Username);
             sessionStorage.setItem('UserType', userbaseTable[0].User_Type);
 
-            // Creating entry in Login table
+            // Checking if user is already loged in
             let res= await fetch("http://localhost/healthgram/test.php",{
                 method:"POST",
                 header:{"Content-Type": "application/json"},
-                body:JSON.stringify({"query":`INSERT INTO tbl_login (Username, Login_Time, Logout_Time) VALUES ('${userbaseTable[0].Username}', current_timestamp(), NULL) ;`})
+                body:JSON.stringify({"query":`SELECT * FROM tbl_login WHERE Username LIKE '${userbaseTable[0].Username}' AND Logout_Time IS NULL; ;`})
             });
             let loginTable = await res.json();
-            console.log(loginTable);
+
+            if (loginTable.length == 0) {
+                // Creating entry in Login table
+                let res= await fetch("http://localhost/healthgram/test.php",{
+                    method:"POST",
+                    header:{"Content-Type": "application/json"},
+                    body:JSON.stringify({"query":`INSERT INTO tbl_login (Username, Login_Time, Logout_Time) VALUES ('${userbaseTable[0].Username}', current_timestamp(), NULL) ;`})
+                });
+            }
 
             if (userbaseTable[0].User_Type == 'admin') {
                 history.push('./admin');

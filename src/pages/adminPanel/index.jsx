@@ -5,6 +5,7 @@ import Uerbase from './userbase/index'
 import DoctorCategory from './doctorCategory/index';
 import Doctor from './doctor/index';
 import Patient from './patient/index';
+import Booking from './booking'
 
 const AdminPanelWrapper = styled.div`
     height: 100vh;
@@ -25,5 +26,6 @@ export function AdminPanel (props) {
         {menu == 'doctorCategory' && <DoctorCategory isActive={active} setActive={setActive}/>}
         {menu == 'doctor' && <Doctor isActive={active} setActive={setActive}/>}
         {menu == 'patient' && <Patient isActive={active} setActive={setActive}/>}
+        {menu == 'booking' && <Booking isActive={active} setActive={setActive}/>}
     </AdminPanelWrapper>
 }

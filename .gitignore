@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+src/pages/consultation/server/node_modules
 /.pnp
 .pnp.js
 

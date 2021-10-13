@@ -6,14 +6,14 @@ import { AdminPanel } from './pages/adminPanel';
 import { DoctorPanel } from './pages/doctorPanel';
 import { PatientPanel } from './pages/patientPanel';
 import { Booking } from './pages/booking';
+import { Consultation } from './pages/consultation';
 
 function App() {
 	return (<>
 		<Router>
 			<Switch>
 				<Route exact path="/">
-					<Navbar textColor={'white'} type={'patient'} />
-					<Booking />
+					<Consultation />
 				</Route>
 				<Route exact path="/home">
 					<Navbar textColor={'white'} opaque={true} type={'home'}/> 
@@ -32,8 +32,6 @@ function App() {
 					<AdminPanel />
 				</Route>
 				<Route exact path="/doctor">
-					<title>doctor</title>
-					<Navbar opaque={true} type={'doctor'} />
 					<DoctorPanel />
 				</Route>
 				<Route exact path="/patient">
@@ -43,6 +41,9 @@ function App() {
 				<Route exact path="/booking">
 					<Navbar textColor={'white'} type={'patient'} />
 					<Booking />
+				</Route>
+				<Route exact path="/consultation">
+					<Consultation />
 				</Route>
 			</Switch>
 		</Router>

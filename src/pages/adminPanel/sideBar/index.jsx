@@ -278,7 +278,7 @@ export default function SideBar (props) {
                 </a>
                 <div>Patients</div>
             </Nav>
-            <Nav isActive={props.isActive}>
+            <Nav isActive={props.isActive} onClick={() => props.setMenu('booking')}>
                 <a href="#">
                     <i class='bx bx-calendar-event'></i>
                     <span>Booking</span>

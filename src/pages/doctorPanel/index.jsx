@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components'
+import { Navbar } from '../../components/navbar'
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -174,6 +175,8 @@ export function DoctorPanel (props) {
     }, []);
 
     return <DoctorPanelWrapper>
+        
+		<Navbar opaque={true} type={'doctor'} />
         <CardsWrapper>
             <IsConsulting>
                 <h1>Consulting Now?</h1>
