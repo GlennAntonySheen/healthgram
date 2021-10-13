@@ -167,10 +167,11 @@ export function DoctorPanel (props) {
     }
     
     useEffect(() => {
+        getNoOfTokens()
         const interval = setInterval(() => {
             getNoOfTokens()
             checkBookingRequest()
-        }, 3000);
+        }, 4000);
         return () => clearInterval(interval);
     }, []);
 

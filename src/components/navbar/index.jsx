@@ -59,7 +59,7 @@ const MiddleSection = styled.div`
     flex: 1;
     justify-content: center;
     align-items: center;
-    background-color: red;
+    /* background-color: red; */
 `;
 
 const RightSection = styled.div`
@@ -85,7 +85,7 @@ const AccessibilityItem = styled(Link)`
     width: auto;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     margin-left: .9rem;
     padding: .4rem;
     color: #006DB6;
@@ -118,10 +118,10 @@ const AccessibilityItem = styled(Link)`
 
 export function Navbar(props) {
     const [scroll, setScroll] = useState(false);
+    const [docProfilePic, setDocProfilePic] = useState('');
     const history = useHistory();
 
     const logout = async () => {
-        console.log('dfbdfb')
         let response = await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
@@ -134,6 +134,19 @@ export function Navbar(props) {
     
     window.addEventListener('scroll', () => {setScroll(window.scrollY > 10)})
 
+    useEffect(async () => {
+        if (sessionStorage.getItem('UserType') == 'doctor') {
+            let response = await fetch("http://localhost/healthgram/test.php", {
+                method:"POST",
+                header:{"Content-Type": "application/json"},
+                body:JSON.stringify({"query": `SELECT Doc_Pic FROM tbl_doctor WHERE Username LIKE '${sessionStorage.getItem('Username')}';`})
+            });
+            let table = await response.json();
+            setDocProfilePic(table[0].Doc_Pic)
+            console.log(table[0].Doc_Pic)
+        }
+    }, [])
+
 return <Wrapper scroll={scroll} opaque={props.opaque}>
         <LeftSection >
             <LogoWrapper scroll={scroll} opaque={props.opaque}>
@@ -142,17 +155,6 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
             </LogoWrapper>
         </LeftSection>
         <MiddleSection>
-            {(props.type == 'doctor') && <Accessibility>
-                {(() => console.log('started'))()}
-                <Chip
-                    avatar={<Avatar alt="D" src="/static/images/avatar/1.jpg" />}
-                    label="Avatar"
-                    variant="outlined"
-                />
-                {/* <button onClick={async () => {
-
-                }}>kdjfghkdjf</button> */}
-            </Accessibility> }
         </MiddleSection>
         <RightSection>
             {(props.type == 'home') && <Accessibility>
@@ -160,7 +162,15 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                 <AccessibilityItem to="/registerDoctor" scroll={scroll} opaque={props.opaque}><h2>Register</h2><h3>as Doctor</h3></AccessibilityItem>
                 <AccessibilityItem to="/login" scroll={scroll} opaque={props.opaque}><h2>Log In</h2><h3><LoginIcon /></h3></AccessibilityItem>
             </Accessibility> }
-            {(props.type == 'patient') && <Accessibility>
+            {(props.type == 'patient') && <Accessibility>           
+                <Accessibility>
+                    <Chip
+                        avatar={<Avatar alt="D" src={docProfilePic} />}
+                        label={sessionStorage.getItem('Username')}
+                        variant="outlined"
+                        color="primary" 
+                    />
+                </Accessibility> 
                 <AccessibilityItem to="/booking" scroll={scroll} opaque={props.opaque}><h2>Book</h2><h3>a Doctor</h3></AccessibilityItem>
                 <AccessibilityItem 
                     to="/home" 
@@ -171,7 +181,15 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                     <h2>Log Out</h2><h3><LogoutIcon /></h3>
                 </AccessibilityItem>
             </Accessibility> }
-            {(props.type == 'doctor') && <Accessibility>
+            {(props.type == 'doctor') && <Accessibility>                
+                <Accessibility>
+                    <Chip
+                        avatar={<Avatar alt="D" src={docProfilePic} />}
+                        label={sessionStorage.getItem('Username')}
+                        variant="outlined"
+                        color="primary" 
+                    />
+                </Accessibility> 
                 <AccessibilityItem 
                     to="/home" 
                     scroll={scroll} 
