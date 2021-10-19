@@ -568,7 +568,8 @@ export function Booking(props) {
         let response= await fetch("http://localhost/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
-            body:JSON.stringify({"query":`INSERT INTO tbl_payment(Pay_Id, Card_Id, Pay_Amount, Pay_Status, Booking_Id) VALUES (NULL, (SELECT Card_Id FROM tbl_card WHERE Card_No='${currentCard}'), ${paymentDetails[0].Booking_Amount},'paid', ${paymentDetails[0].Booking_Id})`})
+            body:JSON.stringify({"query":`INSERT INTO tbl_payment(Pay_Id, Card_Id, Pay_Amount, Pay_Status, Booking_Id) VALUES (NULL, (SELECT Card_Id FROM tbl_card WHERE Card_No='${currentCard}'), ${paymentDetails[0].Booking_Amount},'paid', ${paymentDetails[0].Booking_Id});
+            UPDATE tbl_booking SET Booking_Status='paid' WHERE Booking_Id=${bookingDetails[0].Booking_Id};`})
         });
         let table = await response.json();
         setActiveStep(3)

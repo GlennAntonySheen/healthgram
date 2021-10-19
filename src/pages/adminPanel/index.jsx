@@ -18,7 +18,7 @@ export function AdminPanel (props) {
     document.title = "Admin Panel"
 
     const [ active, setActive ] = useState(false);
-    const [menu, setMenu] = useState('userbase');
+    const [menu, setMenu] = useState('booking');
 
     return <AdminPanelWrapper>
         <SideBar isActive={active} setActive={setActive} setMenu={setMenu} />     

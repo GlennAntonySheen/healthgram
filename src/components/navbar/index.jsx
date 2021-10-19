@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import ReactDOM from 'react-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import { Link } from 'react-router-dom';
@@ -143,7 +142,6 @@ export function Navbar(props) {
             });
             let table = await response.json();
             setDocProfilePic(table[0].Doc_Pic)
-            console.log(table[0].Doc_Pic)
         }
     }, [])
 
@@ -154,7 +152,15 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                 <h1>HealthGram</h1>
             </LogoWrapper>
         </LeftSection>
-        <MiddleSection>
+        <MiddleSection> 
+            {(props.type != 'home') && <Accessibility>
+                <Chip
+                    avatar={<Avatar alt="D" src={docProfilePic} />}
+                    label={sessionStorage.getItem('Username')}
+                    // variant="outlined"
+                    color="primary" 
+                />
+            </Accessibility> }
         </MiddleSection>
         <RightSection>
             {(props.type == 'home') && <Accessibility>
@@ -162,15 +168,7 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                 <AccessibilityItem to="/registerDoctor" scroll={scroll} opaque={props.opaque}><h2>Register</h2><h3>as Doctor</h3></AccessibilityItem>
                 <AccessibilityItem to="/login" scroll={scroll} opaque={props.opaque}><h2>Log In</h2><h3><LoginIcon /></h3></AccessibilityItem>
             </Accessibility> }
-            {(props.type == 'patient') && <Accessibility>           
-                <Accessibility>
-                    <Chip
-                        avatar={<Avatar alt="D" src={docProfilePic} />}
-                        label={sessionStorage.getItem('Username')}
-                        variant="outlined"
-                        color="primary" 
-                    />
-                </Accessibility> 
+            {(props.type == 'patient') && <Accessibility>     
                 <AccessibilityItem to="/booking" scroll={scroll} opaque={props.opaque}><h2>Book</h2><h3>a Doctor</h3></AccessibilityItem>
                 <AccessibilityItem 
                     to="/home" 
@@ -181,15 +179,7 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                     <h2>Log Out</h2><h3><LogoutIcon /></h3>
                 </AccessibilityItem>
             </Accessibility> }
-            {(props.type == 'doctor') && <Accessibility>                
-                <Accessibility>
-                    <Chip
-                        avatar={<Avatar alt="D" src={docProfilePic} />}
-                        label={sessionStorage.getItem('Username')}
-                        variant="outlined"
-                        color="primary" 
-                    />
-                </Accessibility> 
+            {(props.type == 'doctor') && <Accessibility>         
                 <AccessibilityItem 
                     to="/home" 
                     scroll={scroll} 

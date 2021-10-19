@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components'
+import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Navbar } from '../../components/navbar'
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
@@ -7,14 +9,17 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Lottie from 'react-lottie';
 import NewNotification from '../../assets/lottie animations/new-notification.json'
+import VideoCall from '../../assets/lottie animations/video-call.json'
+
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import CancelScheduleSendIcon from '@mui/icons-material/CancelScheduleSend';
 
 const DoctorPanelWrapper = styled.div`
     /* height: 200vh; */
-    width: 100vw;
+    /* width: 100vw; */
     margin-top: 90px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     /* background-color: green; */
@@ -29,7 +34,7 @@ const CardsWrapper = styled.div`
 const IsConsulting = styled.div`
     height: 120px;
     width: 300px;
-    margin: 20px;
+    margin: 11px;
     padding:30px;
     display: flex;
     flex-direction: column;
@@ -56,7 +61,7 @@ const IsConsulting = styled.div`
 const TokenContainer = styled.div`
     height: 120px;
     width: 300px;
-    margin: 20px;
+    margin: 8px;
     padding:30px;
     display: flex;
     flex-direction: column;
@@ -104,7 +109,7 @@ const RequestContainer = styled.div`
 
 const RequestText = styled.div`
     height: 100%;
-    width: 300px;
+    width: 250px;
     margin-left: 10px;
     display: flex;
     flex-direction: column;
@@ -120,7 +125,7 @@ const RequestText = styled.div`
         margin: 2px 0;
         padding: 0px 6px;
         /* color: #006db6; */
-        background-color: #e7f1fb;
+        background-color: white;
         border-radius: .3rem;
     }
 `;
@@ -136,13 +141,48 @@ const RequestControls = styled.div`
     
 `;
 
+const ConstulationWrapper = styled.div`
+    margin: 8px;
+    padding: 8px;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    border-radius: 1rem;
+    box-shadow: 0 9px 24px rgb(0 0 0 / 12%), 0 9px 24px rgb(0 0 0 / 12%);
+    background-color: white;
+
+    h1 {
+        width: 100%;
+        text-align: center;
+    }
+`;
+
+const Consultation = styled.div`
+    width: 560px;
+    margin: 8px;
+    padding: 8px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 1rem;
+    background-color: #006db6;    
+`;
+
+const ConsultationControls = styled(Link)`
+    height: fit-content;
+    width: fit-content;
+    cursor: pointer;
+`;
+
 export function DoctorPanel (props) {
     document.title = "Doctor Panel"
-
+  
+    const history = useHistory();
     const [showTokens, setShowTokens] = useState(false)
     const [noOfTokens, setNoOfTokens] = useState(1)
     const [bookingRequests, setBookingRequest] = useState([])
-    const [tokens, setTokens] = useState([{Doc_No_Of_Tokens: 0}])
+    const [consultations, setConsultations] = useState([])
+    const [tokens, setTokens] = useState([{Doc_No_Of_Tokens: "0"}])
 
     
     const checkBookingRequest = async () => {
@@ -165,12 +205,26 @@ export function DoctorPanel (props) {
         let table = await response.json();
         setTokens(table)
     }
+
+    const checkConsultations = async () => {
+        let response = await fetch("http://localhost/healthgram/test.php", {
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query": `SELECT * FROM tbl_booking JOIN tbl_patient ON tbl_patient.Pat_Id= tbl_booking.Pat_Id WHERE Booking_Status LIKE 'paid' AND Doc_Id=(SELECT Doc_Id FROM tbl_doctor WHERE Username LIKE '${sessionStorage.getItem('Username')}');`})
+        });
+        let table = await response.json();
+        setConsultations(table)
+    }
     
-    useEffect(() => {
+    useEffect(() => {        
+        sessionStorage.removeItem('Refreshed');
+
         getNoOfTokens()
+        checkConsultations()
         const interval = setInterval(() => {
             getNoOfTokens()
             checkBookingRequest()
+            checkConsultations()
         }, 4000);
         return () => clearInterval(interval);
     }, []);
@@ -238,8 +292,7 @@ export function DoctorPanel (props) {
                 <span>Number Of Tokens</span>
                 <p>{tokens[0].Doc_No_Of_Tokens}</p>
             </TokenContainer>
-        </CardsWrapper>
-        
+        </CardsWrapper>        
         
         <BookingRequests>
             {bookingRequests.map((patient, index) => 
@@ -300,6 +353,45 @@ export function DoctorPanel (props) {
 
             )}
         </BookingRequests>
+        <ConstulationWrapper>
+            <h1>Pending Consultations</h1>
+            {consultations.map((booking, index) => 
+                <Consultation>
+                    <RequestText>
+                        <h3>{booking.Pat_Name.toUpperCase()   }</h3>
+                        <h3>
+                            {booking.Pat_Gender.toUpperCase()}                            
+                            <i class={`bx bx-${booking.Pat_Gender}`}></i>
+                        </h3>
+                        {/* <h3>{`${new Date().getFullYear() - booking.Pat_Dob.substr(0, 4)} Years old`}</h3> */}
+                        <h3>{booking.Booking_Id}</h3>
+                        <h3>{booking.Username}</h3>
+                    </RequestText>       
+                    <ConsultationControls 
+                        to={`/consultation/${booking.Booking_Id}`}
+                        // onClick={async () => {
+                        //     sessionStorage.setItem('BookingId', booking.Booking_Id);
+                        //     // history.push('./consultation');
+                        // }}
+                    >           
+                        <Lottie 
+                            options={{
+                                loop: true,
+                                autoplay: true,
+                                speed: .030,
+                                animationData: VideoCall,
+                                rendererSettings: {
+                                    preserveAspectRatio: "xMidYMid slice"
+                                }
+                            }}
+                            height={100}
+                            width={110}                            
+                        /> 
+                    </ConsultationControls>                     
+                </Consultation>    
+
+            )}
+        </ConstulationWrapper>
         {/* <button onClick={() => console.log(bookingRequests)} >fgnfgnfg</button> */}
             {/* {JSON.stringify(bookingRequests)} */}
 

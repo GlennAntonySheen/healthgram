@@ -42,7 +42,7 @@ function App() {
 					<Navbar textColor={'white'} type={'patient'} />
 					<Booking />
 				</Route>
-				<Route exact path="/consultation">
+				<Route exact path="/consultation/:bookidorvideolink">
 					<Consultation />
 				</Route>
 			</Switch>
