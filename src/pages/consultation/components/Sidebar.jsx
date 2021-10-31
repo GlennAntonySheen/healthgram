@@ -1,10 +1,13 @@
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components'
-import { Button, TextField, Grid, Typography, Container, Paper, Dialog, IconButton } from '@material-ui/core';
+import { Button, TextField, Grid, Typography, Container, Paper, Dialog, IconButton, Tooltip } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Assignment, Phone, PhoneDisabled } from '@material-ui/icons';
+import CallEndIcon from '@mui/icons-material/CallEnd';
 import { makeStyles } from '@material-ui/core/styles';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import { SocketContext } from '../Context';
 
@@ -24,7 +27,7 @@ const DialogContainer = styled.div`
 `;
 
 const ControlWrapper = styled.div`
-    height: 90px;
+    height: 80px;
     width: fit-content;
     display: flex;
     justify-content: space-evenly;
@@ -34,6 +37,19 @@ const ControlWrapper = styled.div`
     bottom: 15px;
     left: 0; 
     right: 0; 
+	border-radius: 3rem;
+	background-color: white;
+    box-shadow: 0 9px 24px rgb(0 0 0 / 12%), 0 9px 24px rgb(0 0 0 / 12%);
+`;
+
+const ControlItem = styled.div`
+	width: 70px;
+	margin: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 100%;
+	background-color: white;
 `;
 
 const useStyles = makeStyles((theme) => ({
@@ -68,12 +84,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Sidebar = ({ children }) => {
-	const { me, callAccepted, name, setName, callEnded, leaveCall, callUser } = useContext(SocketContext);
+	const { me, callAccepted, name, setName, callEnded, leaveCall, callUser, showPrescriptions, setShowPrescriptions } = useContext(SocketContext);
 	const [idToCall, setIdToCall] = useState('');
 	const classes = useStyles();
 
 	return (<>
-		<button onClick={() => console.log(!callAccepted)}>dfdfdfgfd</button>
 		{sessionStorage.getItem('UserType') === 'patient' &&
 			<Dialog 
 				open={!callAccepted}
@@ -89,28 +104,58 @@ const Sidebar = ({ children }) => {
 			>
 				<DialogContainer>
 					<TextField 
-						label="Paste Meeting Link *" 
+						label="Paste Join Link *" 
 						variant="outlined" 
 						color="primary"
 						focused
+						autoFocus 
 						fullWidth
 						onChange={(e) => setIdToCall(e.target.value)}
-					/>
-					<IconButton 
-						onClick={() => callUser(idToCall)}
-					>
-						<MeetingRoomIcon color="primary" sx={{ fontSize: 30 }} />
-					</IconButton>
+					/>		
+					<div>		
+						<Tooltip title="End Call">
+							<IconButton onClick={() => leaveCall()}>
+								<CallEndIcon sx={{ color: 'red', fontSize: 30 }} />
+							</IconButton>
+						</Tooltip>			
+						<Tooltip title="Join Video Call">
+							<IconButton 								
+								onClick={() => callUser(idToCall)}
+								disabled={idToCall == ''}
+							>
+								<MeetingRoomIcon color={idToCall == '' ? 'disabled' : "primary"} sx={{ fontSize: 30 }} />
+							</IconButton>
+						</Tooltip>
+					</div>
 				</DialogContainer>
 			</Dialog>
 		}		
 		<ControlWrapper>
-
+			<ControlItem  style={{ 'background-color': '#1976d2' }}>
+				<Tooltip title="End Call">
+            		<IconButton onClick={() => leaveCall()}><CallEndIcon sx={{ color: 'white', fontSize: 40 }} /></IconButton>
+				</Tooltip>
+			</ControlItem>
+			<ControlItem>
+				<Tooltip title="Toggle Prescription View">
+					<IconButton onClick={() => setShowPrescriptions(!showPrescriptions)}>
+						<CopyToClipboard text={me}><EventNoteIcon color="primary" sx={{ fontSize: 40 }} /></CopyToClipboard>
+					</IconButton>
+				</Tooltip>
+			</ControlItem>
+			<ControlItem>
+				<Tooltip title="Copy Your ID">
+					<IconButton>
+						<CopyToClipboard text={me}><InfoOutlinedIcon color="primary" sx={{ fontSize: 40 }} /></CopyToClipboard>
+					</IconButton>
+				</Tooltip>
+			</ControlItem>
 		</ControlWrapper>
-		<Container className={classes.container}>
-			<Paper elevation={10} className={classes.paper}>
-				<form className={classes.root} noValidate autoComplete="off">
-					<Grid container className={classes.gridContainer}>
+		{children}
+		{/* <Container className={classes.container}>
+			<Paper elevation={10} className={classes.paper}> 
+				{/* <form className={classes.root} noValidate autoComplete="off"> 
+					{/* <Grid container className={classes.gridContainer}>
 						<Grid item xs={12} md={6} className={classes.padding}>
 							<Typography gutterBottom variant="h6">Account Info</Typography>
 							<TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
@@ -133,11 +178,10 @@ const Sidebar = ({ children }) => {
 								</Button>
 							)}
 						</Grid>
-					</Grid>
-				</form>
-				{children}
-			</Paper>
-		</Container>
+					</Grid> */}
+				{/* </form> */}
+			{/* </Paper>
+		</Container> */}
 	</>
 	);
 };

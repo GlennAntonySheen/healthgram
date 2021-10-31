@@ -15,6 +15,8 @@ const ContextProvider = ({ children }) => {
 	const [name, setName] = useState('');
 	const [call, setCall] = useState({});
 	const [me, setMe] = useState('');
+	const [prescriptions, setPrescriptions] = useState('');
+	const [showPrescriptions, setShowPrescriptions] = useState(false);
 
 	const myVideo = useRef();
 	const userVideo = useRef();
@@ -60,7 +62,7 @@ const ContextProvider = ({ children }) => {
                     header:{"Content-Type": "application/json"},
                     body:JSON.stringify({"query":`SELECT Doc_Name FROM tbl_doctor WHERE Doc_Id=(SELECT Doc_Id FROM tbl_booking WHERE Booking_Id=${window.location.href.split('/')[4]}); 
 					UPDATE tbl_booking SET Consultation_Link='${id}' WHERE Booking_Id=${window.location.href.split('/')[4]};
-					`})
+					UPDATE tbl_prescription SET Pres_Date = current_timestamp() WHERE tbl_prescription.Pres_Id =(SELECT Pres_Id FROM tbl_booking WHERE Booking_Id=${window.location.href.split('/')[4]}); `})
                 });
                 let table = await res.json();
                 setName(`Dr. ${table[0].Doc_Name}`)   
@@ -124,7 +126,9 @@ const ContextProvider = ({ children }) => {
 	const leaveCall = async () => {
 		setCallEnded(true);
 
-		connectionRef.current.destroy();
+        if (connectionRef.current !== undefined) {
+            connectionRef.current.destroy()
+        }
 
 		// window.location.reload();
         
@@ -156,6 +160,10 @@ const ContextProvider = ({ children }) => {
 			callUser,
 			leaveCall,
 			answerCall,
+			prescriptions, 
+			setPrescriptions,
+			showPrescriptions, 
+			setShowPrescriptions
 		}}
 		>
 			{children}

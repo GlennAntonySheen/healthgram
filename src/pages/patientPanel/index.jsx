@@ -50,7 +50,7 @@ const ConsultationWrapper = styled.div`
     overflow: hidden;
     border-radius: 1rem;
     box-shadow: 0 9px 24px rgb(0 0 0 / 12%), 0 9px 24px rgb(0 0 0 / 12%);
-    /* background-color: yellow; */
+    background-color: yellow;
 `;
 
 const ConsultationBackgroundImg = styled.div`
@@ -68,7 +68,7 @@ const ConsultationBackgroundImg = styled.div`
 const ConsultationTextContainer = styled.div`
     display: flex;
     flex: 1;
-    /* background-color: pink; */
+    background-color: pink;
 `;
 
 const ChatLink = styled.div`

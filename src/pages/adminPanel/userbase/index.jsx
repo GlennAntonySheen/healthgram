@@ -214,21 +214,6 @@ export default function Userbase (props) {
                     }
                 })}
             />
-            {/* <TextField 
-                name="password" 
-                label="Password *" 
-                variant="outlined" 
-                fullWidth={false} 
-                error={!!errors.password}
-                helperText={!!errors.password ? errors.password.message : ''} 
-                {...register("password", { 
-                    required: "Please Enter A Password",
-                    minLength: {
-                        value: 8,
-                        message: "Password Must Contain Atleast 8 Characters"                            
-                    }
-                })}
-            /> */}
             <TextField
                 name="password" 
                 label="Password *" 

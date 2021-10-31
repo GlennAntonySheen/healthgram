@@ -94,7 +94,7 @@ export default function Booking(props) {
         //     console.log(statusCount[e.Booking_Status])
         // })
         // table.forEach(row=)
-        
+
     }
 
     useEffect(() => {

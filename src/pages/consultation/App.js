@@ -13,8 +13,8 @@ const ConstulationWrapper = styled.div`
     width: 100vw;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    background-color: orange;
+    justify-content: flex-start;
+    /* background-color: orange; */
 `;
 
 const App = () => {
