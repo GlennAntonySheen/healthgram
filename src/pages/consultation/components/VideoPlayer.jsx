@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { SocketContext } from '../Context';
 import LogoImg from '../../../assets/logo/Technology to Customize Your Design _ GraphicSprings - Brave 20-Jun-21 11_44_14 AM.png';
 import TextField from '@mui/material/TextField';
-import Chip from '@mui/material/Chip';
+import jsPDF from 'jspdf';
 
 const Wrapper = styled.div`
 	height: 89vh;
@@ -178,7 +178,23 @@ const VideoPlayer = () => {
 			}, 3000);		
 			return () => clearInterval(interval); 
 		}
-	  }, [])
+	}, [])
+
+	const generatePDF = () => {
+		// const pdf = new jsPDF('p', 'pt', 'a4');
+		// pdf.html(document.querySelector('#pres'), {
+		// 	callback: function (pdf) {
+		// 		pdf.save('Prescription.pdf');
+		// 	}
+		// })
+
+		// html2canvas(element, {
+		// 	onrendered: function (canvas) {
+		// 	  $("#previewImage").append(canvas);
+		// 	  getCanvas = canvas;
+		// 	}
+		//   });
+	}
 
 	return (
 		<Wrapper>
@@ -194,14 +210,15 @@ const VideoPlayer = () => {
 					</Canvas>
 				)}
 			</VideoWrapper>
-			{showPrescriptions && ( <Prescription>
+			{showPrescriptions && ( <Prescription id="pres">
 				<PrescriptionHeader>						
 					<LogoWrapper>
 						<img src={LogoImg} alt=""/>
 						<h1>PRESCRIPTIONS</h1>
 					</LogoWrapper>
 					<BookingDetailsContainer>
-						<span>{`Booking ID: ${bookingDetails[0].Booking_Id}`}</span>							
+						<span>{`Booking ID: ${bookingDetails[0].Booking_Id}`}</span>			
+						<span>{`Prescription ID: ${bookingDetails[0].Pres_Id}`}</span>						
 						<span>{`Time: ${bookingDetails[0].Pres_Date.substr(0, 16)}`}</span>
 
 					</BookingDetailsContainer>
@@ -236,7 +253,7 @@ const VideoPlayer = () => {
 						setPrescriptions(event.target.value)
 					}}
 				/>
-				{/* <button onClick={ () => {console.log(showPrescriptions)}}>Get Booking Details</button> */}
+				{/* <button onClick={ () => generatePDF()}>Get Booking Details</button> */}
 			</Prescription> )}
 		</Wrapper>
 	);

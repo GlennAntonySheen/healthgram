@@ -14,6 +14,7 @@ import VideoCall from '../../assets/lottie animations/video-call.json'
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import CancelScheduleSendIcon from '@mui/icons-material/CancelScheduleSend';
+import NoPatients from '../../assets/images/noPatients.jpg';
 
 const DoctorPanelWrapper = styled.div`
     /* height: 200vh; */
@@ -155,6 +156,10 @@ const ConstulationWrapper = styled.div`
         width: 100%;
         text-align: center;
     }
+
+    img {
+        width: 60%;
+    }
 `;
 
 const Consultation = styled.div`
@@ -225,7 +230,7 @@ export function DoctorPanel (props) {
             getNoOfTokens()
             checkBookingRequest()
             checkConsultations()
-        }, 4000);
+        }, 3000);
         return () => clearInterval(interval);
     }, []);
 
@@ -249,8 +254,9 @@ export function DoctorPanel (props) {
                             });
                             let table = await response.json();
                             if (table[0] !== undefined) {
-                                console.log(table[0].Doc_No_Of_Tokens)
                                 setNoOfTokens(table[0].Doc_No_Of_Tokens > 0 ? table[0].Doc_No_Of_Tokens : 1)                                        
+                            } else {
+                                getNoOfTokens()
                             }
                             setShowTokens(event.target.checked)
                         }}
@@ -354,45 +360,51 @@ export function DoctorPanel (props) {
             )}
         </BookingRequests>
         <ConstulationWrapper>
-            <h1>Pending Consultations</h1>
-            {consultations.map((booking, index) => 
-                <Consultation>
-                    <RequestText>
-                        <h3>{booking.Pat_Name.toUpperCase()   }</h3>
-                        <h3>
-                            {booking.Pat_Gender.toUpperCase()}                            
-                            <i class={`bx bx-${booking.Pat_Gender}`}></i>
-                        </h3>
-                        {/* <h3>{`${new Date().getFullYear() - booking.Pat_Dob.substr(0, 4)} Years old`}</h3> */}
-                        <h3>{booking.Booking_Id}</h3>
-                        <h3>{booking.Username}</h3>
-                    </RequestText>       
-                    <ConsultationControls 
-                        to={`/consultation/${booking.Booking_Id}`}
-                        // onClick={async () => {
-                        //     sessionStorage.setItem('BookingId', booking.Booking_Id);
-                        //     // history.push('./consultation');
-                        // }}
-                    >           
-                        <Lottie 
-                            options={{
-                                loop: true,
-                                autoplay: true,
-                                speed: .030,
-                                animationData: VideoCall,
-                                rendererSettings: {
-                                    preserveAspectRatio: "xMidYMid slice"
-                                }
-                            }}
-                            height={100}
-                            width={110}                            
-                        /> 
-                    </ConsultationControls>                     
-                </Consultation>    
-
-            )}
+            {consultations.length == 0 && <>
+                <h1>No Consultations</h1>
+                <img src={NoPatients} alt="No Consultation" />
+            </>}
+            {consultations.length != 0 && <>
+                <h1>Pending Consultations</h1>
+                {consultations.map((booking, index) => 
+                    <Consultation>
+                        <RequestText>
+                            <h3>{booking.Pat_Name.toUpperCase()   }</h3>
+                            <h3>
+                                {booking.Pat_Gender.toUpperCase()}                            
+                                <i class={`bx bx-${booking.Pat_Gender}`}></i>
+                            </h3>
+                            {/* <h3>{`${new Date().getFullYear() - booking.Pat_Dob.substr(0, 4)} Years old`}</h3> */}
+                            <h3>{booking.Booking_Id}</h3>
+                            <h3>{booking.Username}</h3>
+                        </RequestText>       
+                        <ConsultationControls 
+                            to={`/consultation/${booking.Booking_Id}`}
+                            // onClick={async () => {
+                            //     sessionStorage.setItem('BookingId', booking.Booking_Id);
+                            //     // history.push('./consultation');
+                            // }}
+                        >           
+                            <Lottie 
+                                options={{
+                                    loop: true,
+                                    autoplay: true,
+                                    speed: .030,
+                                    animationData: VideoCall,
+                                    rendererSettings: {
+                                        preserveAspectRatio: "xMidYMid slice"
+                                    }
+                                }}
+                                height={100}
+                                width={110}                            
+                            /> 
+                        </ConsultationControls>                     
+                    </Consultation>          
+                )}
+            </> }
+            
         </ConstulationWrapper>
-        {/* <button onClick={() => console.log(bookingRequests)} >fgnfgnfg</button> */}
+        <button onClick={() => console.log(consultations.length)} >fgnfgnfg</button>
             {/* {JSON.stringify(bookingRequests)} */}
 
     </DoctorPanelWrapper>

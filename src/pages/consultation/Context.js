@@ -138,7 +138,7 @@ const ContextProvider = ({ children }) => {
             let res= await fetch("http://localhost/healthgram/test.php",{
                 method:"POST",
                 header:{"Content-Type": "application/json"},
-                body:JSON.stringify({"query":`UPDATE tbl_booking SET Consultation_Link=NULL WHERE Booking_Id=${window.location.href.split('/')[4]};`})
+                body:JSON.stringify({"query":`UPDATE tbl_booking SET Consultation_Link=NULL, Booking_Status='completed' WHERE Booking_Id=${window.location.href.split('/')[4]};`})
             });
             history.push('/doctor');
         } else if (sessionStorage.getItem('UserType') == 'patient') {

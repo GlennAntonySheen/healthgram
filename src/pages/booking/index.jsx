@@ -475,7 +475,7 @@ export function Booking(props) {
             body:JSON.stringify({"query":`SELECT tbl_userbase.Username, Doc_Id, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name = '${data.searchQuery}') AND tbl_doctor.Doc_Gender LIKE '${data.gender}' AND Doc_No_Of_Tokens>0 AND tbl_doctor.Doc_Fee BETWEEN ${priceRange[0]} AND ${priceRange[1]};`})
         });
         let table = await response.json();
-        // console.log(table);
+        console.log(`SELECT tbl_userbase.Username, Doc_Id, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name = '${data.searchQuery}') AND tbl_doctor.Doc_Gender LIKE '${data.gender}' AND Doc_No_Of_Tokens>0 AND tbl_doctor.Doc_Fee BETWEEN ${priceRange[0]} AND ${priceRange[1]};`);
         setDoctors(table)
     }
 
@@ -933,7 +933,7 @@ export function Booking(props) {
             </>}
             {/* {JSON.stringify(watch(), null, 20)} */}
             {/* <pre style={{maxWidth: "900px"}}>{JSON.stringify(doctors, null, 2)}</pre> */}
-            {/* <button onClick={() => getPaymentDetails()}>fjjt</button> */}
+            {/* <button onClick={() => }>fjjt</button> */}
         </BookingSection> 
     
     </BookingPageContainer>
