@@ -60,13 +60,13 @@ export function Consultation(props) {
 //             console.log('mmmmmme')
 //             // Posting join link
 //             if (sessionStorage.getItem('UserType') == 'doctor') {
-//                 let res= await fetch("http://localhost/healthgram/test.php",{
+//                 let res= await fetch("http://localhost:8080/healthgram/test.php",{
 //                     method:"POST",
 //                     header:{"Content-Type": "application/json"},
 //                     body:JSON.stringify({"query":`UPDATE tbl_booking SET Consultation_Link='${id}' WHERE Booking_Id=${window.location.href.split('/')[4]};`})
 //                 });
 //             } else if (sessionStorage.getItem('UserType') == 'patient') {
-//                 let response= await fetch("http://localhost/healthgram/test.php",{
+//                 let response= await fetch("http://localhost:8080/healthgram/test.php",{
 //                     method:"POST",
 //                     header:{"Content-Type": "application/json"},
 //                     body:JSON.stringify({"query":`SELECT Consultation_Link FROM tbl_booking WHERE Booking_Id=${window.location.href.split('/')[4]};`})
@@ -141,7 +141,7 @@ export function Consultation(props) {
 //         sessionStorage.removeItem('Refreshed');
         
 //         if (sessionStorage.getItem('UserType') == 'doctor') {
-//             // let res= await fetch("http://localhost/healthgram/test.php",{
+//             // let res= await fetch("http://localhost:8080/healthgram/test.php",{
 //             //     method:"POST",
 //             //     header:{"Content-Type": "application/json"},
 //             //     body:JSON.stringify({"query":`UPDATE tbl_booking SET Consultation_Link=NULL WHERE Booking_Id=${window.location.href.split('/')[4]};`})

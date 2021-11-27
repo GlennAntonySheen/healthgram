@@ -191,7 +191,7 @@ export function DoctorPanel (props) {
 
     
     const checkBookingRequest = async () => {
-        let response = await fetch("http://localhost/healthgram/test.php", {
+        let response = await fetch("http://localhost:8080/healthgram/test.php", {
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query": `SELECT tbl_patient.Pat_Id, Booking_Id, Doc_Id , Pat_Name, Username, Pat_Dob, Pat_Gender FROM tbl_booking JOIN tbl_patient ON tbl_booking.Pat_Id=tbl_patient.Pat_Id WHERE Booking_Status LIKE 'not confirmed' AND Doc_Id=(SELECT Doc_Id FROM tbl_doctor WHERE Username='${sessionStorage.getItem('Username')}') ORDER BY Booking_Date DESC;`})
@@ -202,7 +202,7 @@ export function DoctorPanel (props) {
     }
 
     const getNoOfTokens = async () => {
-        let response = await fetch("http://localhost/healthgram/test.php", {
+        let response = await fetch("http://localhost:8080/healthgram/test.php", {
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query": `SELECT Doc_No_Of_Tokens FROM tbl_doctor WHERE Username='${sessionStorage.getItem('Username')}';`})
@@ -212,7 +212,7 @@ export function DoctorPanel (props) {
     }
 
     const checkConsultations = async () => {
-        let response = await fetch("http://localhost/healthgram/test.php", {
+        let response = await fetch("http://localhost:8080/healthgram/test.php", {
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query": `SELECT * FROM tbl_booking JOIN tbl_patient ON tbl_patient.Pat_Id= tbl_booking.Pat_Id WHERE Booking_Status LIKE 'paid' AND Doc_Id=(SELECT Doc_Id FROM tbl_doctor WHERE Username LIKE '${sessionStorage.getItem('Username')}');`})
@@ -244,7 +244,7 @@ export function DoctorPanel (props) {
                     <Switch 
                         defaultChecked={false}
                         onChange = { async (event) => {
-                            let response = await fetch("http://localhost/healthgram/test.php", {
+                            let response = await fetch("http://localhost:8080/healthgram/test.php", {
                                 method:"POST",
                                 header:{"Content-Type": "application/json"},
                                 body:JSON.stringify({"query": event.target.checked ? 
@@ -280,7 +280,7 @@ export function DoctorPanel (props) {
                         <IconButton 
                             color="primary"
                             onClick={ async () => {
-                                let response = await fetch("http://localhost/healthgram/test.php", {
+                                let response = await fetch("http://localhost:8080/healthgram/test.php", {
                                     method:"POST",
                                     header:{"Content-Type": "application/json"},
                                     body:JSON.stringify({"query": `UPDATE tbl_doctor SET Doc_No_Of_Tokens=${noOfTokens} WHERE Username='${sessionStorage.getItem('Username')}';`})
@@ -330,7 +330,7 @@ export function DoctorPanel (props) {
                             variant="contained" 
                             startIcon={<DoneAllIcon />}
                             onClick={async () => {
-                                let response = await fetch("http://localhost/healthgram/test.php", {
+                                let response = await fetch("http://localhost:8080/healthgram/test.php", {
                                     method:"POST",
                                     header:{"Content-Type": "application/json"},
                                     body:JSON.stringify({"query": `UPDATE tbl_booking SET Booking_Status = 'confirmed' WHERE tbl_booking.Booking_Id = ${patient.Booking_Id };
@@ -345,7 +345,7 @@ export function DoctorPanel (props) {
                             startIcon={<CancelScheduleSendIcon />} 
                             sx={{ml: 3}}
                             onClick={async () => {
-                                let response = await fetch("http://localhost/healthgram/test.php", {
+                                let response = await fetch("http://localhost:8080/healthgram/test.php", {
                                     method:"POST",
                                     header:{"Content-Type": "application/json"},
                                     body:JSON.stringify({"query": `UPDATE tbl_booking SET Booking_Status = 'rejected' WHERE tbl_booking.Booking_Id = ${patient.Booking_Id };`})
@@ -404,7 +404,7 @@ export function DoctorPanel (props) {
             </> }
             
         </ConstulationWrapper>
-        <button onClick={() => console.log(consultations.length)} >fgnfgnfg</button>
+        {/* <button onClick={() => console.log(consultations.length)} >fgnfgnfg</button> */}
             {/* {JSON.stringify(bookingRequests)} */}
 
     </DoctorPanelWrapper>

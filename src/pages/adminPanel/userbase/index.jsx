@@ -57,7 +57,7 @@ const AllUsers = styled.div`
 `;
 
 const AddAdmin = styled.div`
-    /* height: auto; */
+    height:auto;
     width: 100%;
     display: flex;
     justify-content: space-around;
@@ -68,7 +68,7 @@ const AddAdmin = styled.div`
     padding: 20px;
     transition: 12s  ease-in-out;
     background-color: white;
-
+    
     h3 {
         margin: auto 0px;
         font-family: sans-serif;
@@ -89,12 +89,8 @@ export default function Userbase (props) {
     } = useForm({ mode: "all" });   
     const [showPassword, setShowPassword] = useState(false);
 
-    const addAdminStyle = { 
-        marginTop: '5px',
-    }
-
     const getUserDetails = async () => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT * FROM tbl_userbase;`})
@@ -105,7 +101,7 @@ export default function Userbase (props) {
 
     const addAdmin = async (data) => {
         // Checking if the new user already exist
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT * FROM tbl_userbase WHERE Username="${data.email}";`})
@@ -116,7 +112,7 @@ export default function Userbase (props) {
         // no duplicate user exist
         if (table.length == 0) {
             console.log(data)
-            let response= await fetch("http://localhost/healthgram/test.php",{
+            let response= await fetch("http://localhost:8080/healthgram/test.php",{
                 method:"POST",
                 header:{"Content-Type": "application/json"},
                 body:JSON.stringify({"query":`INSERT INTO tbl_userbase(Username, Password, User_Type, User_Status) VALUES ('${data.email}','${data.password}','admin','verified');`})
@@ -156,7 +152,7 @@ export default function Userbase (props) {
                         disabled: rowData.User_Status == 'inactive',
                         hidden: rowData.User_Status == 'inactive',
                         onClick: async (event, rowData) => {
-                            let response= await fetch("http://localhost/healthgram/test.php",{
+                            let response= await fetch("http://localhost:8080/healthgram/test.php",{
                                 method:"POST",
                                 header:{"Content-Type": "application/json"},
                                 body:JSON.stringify({"query":`UPDATE tbl_userbase SET User_Status = 'inactive' WHERE tbl_userbase.Username = '${rowData.Username}';`})
@@ -171,7 +167,7 @@ export default function Userbase (props) {
                         disabled: rowData.User_Status == 'verified',
                         hidden: rowData.User_Status == 'verified' || rowData.User_Status == 'not verified',
                         onClick: async (event, rowData) => {
-                            let response= await fetch("http://localhost/healthgram/test.php",{
+                            let response= await fetch("http://localhost:8080/healthgram/test.php",{
                                 method:"POST",
                                 header:{"Content-Type": "application/json"},
                                 body:JSON.stringify({"query":`UPDATE tbl_userbase SET User_Status = 'verified' WHERE tbl_userbase.Username = '${rowData.Username}';`})
@@ -192,20 +188,26 @@ export default function Userbase (props) {
                     // backgroundColor: 'transparent'
                 }}
             />
-        </AllUsers> 
+        </AllUsers>  
         <AddAdmin>
             <h3>ADD ADMIN</h3>         
             <Tooltip title="Add Admin">
                 <IconButton aria-label="delete" size="large" color="primary" onClick={handleSubmit(addAdmin)} disabled={!isValid}>
                     <PersonAddIcon />
                 </IconButton>
-            </Tooltip>            
+            </Tooltip>    
+              
             <TextField 
                 name="email"
                 label="Email ID *" 
                 variant="outlined" 
                 error={!!errors.email}
                 helperText={!!errors.email ? errors.email.message : ''}
+                inputProps={{
+                   style: {
+                     padding: 15
+                   }
+                }}
                 {...register("email", { 
                     required: "Please Enter E-mail ID",
                     pattern: {
@@ -214,6 +216,7 @@ export default function Userbase (props) {
                     }
                 })}
             />
+       
             <TextField
                 name="password" 
                 label="Password *" 
@@ -231,7 +234,10 @@ export default function Userbase (props) {
                         {showPassword ? <Visibility /> : <VisibilityOff />}
                         </IconButton>
                     </InputAdornment>
-                    )
+                    ),
+                    style: {
+                      padding: 10
+                    }
                 }}
                 {...register("password", { 
                     required: "Please Enter A Password",
@@ -241,8 +247,26 @@ export default function Userbase (props) {
                     }
                 })}
             />
-            <TextField disabled label="User Type" defaultValue="admin" />
-            <TextField disabled label="User Type" defaultValue="🟢 verified" />
+            <TextField 
+                disabled 
+                label="User Type" 
+                defaultValue="admin" 
+                inputProps={{
+                   style: {
+                     padding: 15
+                   }
+                }}
+            />
+            <TextField 
+                disabled 
+                label="User Type" 
+                defaultValue="🟢 verified" 
+                inputProps={{
+                   style: {
+                     padding: 15
+                   }
+                }}
+            />
             {/* <button onClick={() =>  setDuplicateAdminInsert(true)  }>dhfg</button>  */}
             {/* <pre>{JSON.stringify(watch(), null, 2)}</pre>  */}
         </AddAdmin>

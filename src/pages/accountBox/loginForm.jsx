@@ -19,7 +19,7 @@ export function LoginInForm (props) {
 
     const OnSubmit = async data => {
         // console.log(data)
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT * FROM tbl_userbase WHERE Username="${data.email}";`})
@@ -39,7 +39,7 @@ export function LoginInForm (props) {
             sessionStorage.setItem('UserType', userbaseTable[0].User_Type);
 
             // Checking if user is already loged in
-            let res= await fetch("http://localhost/healthgram/test.php",{
+            let res= await fetch("http://localhost:8080/healthgram/test.php",{
                 method:"POST",
                 header:{"Content-Type": "application/json"},
                 body:JSON.stringify({"query":`SELECT * FROM tbl_login WHERE Username LIKE '${userbaseTable[0].Username}' AND Logout_Time IS NULL; ;`})
@@ -48,7 +48,7 @@ export function LoginInForm (props) {
 
             if (loginTable.length == 0) {
                 // Creating entry in Login table
-                let res= await fetch("http://localhost/healthgram/test.php",{
+                let res= await fetch("http://localhost:8080/healthgram/test.php",{
                     method:"POST",
                     header:{"Content-Type": "application/json"},
                     body:JSON.stringify({"query":`INSERT INTO tbl_login (Username, Login_Time, Logout_Time) VALUES ('${userbaseTable[0].Username}', current_timestamp(), NULL) ;`})

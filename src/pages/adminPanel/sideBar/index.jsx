@@ -230,7 +230,7 @@ export default function SideBar (props) {
     const history = useHistory();
 
     const logout = async () => {
-        let response = await fetch("http://localhost/healthgram/test.php",{
+        let response = await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`UPDATE tbl_login SET Logout_Time=CURRENT_TIMESTAMP WHERE Logout_Time IS NULL AND Username='${sessionStorage.getItem('Username')}' ORDER BY Login_Time DESC LIMIT 1; ;`})

@@ -7,6 +7,7 @@ import { DoctorPanel } from './pages/doctorPanel';
 import { PatientPanel } from './pages/patientPanel';
 import { Booking } from './pages/booking';
 import { Consultation } from './pages/consultation';
+import TextField from '@mui/material/TextField';
 
 function App() {
 	return (<>

@@ -55,7 +55,7 @@ export default function Patient(props) {
 
 
     const getUnverifiedPatients = async () => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT patient.Username, Pat_Id, Pat_Name, Pat_Phone_No, Pat_Dob, Pat_Date_Registered, Pat_Id_Proof FROM healthgram.tbl_userbase userbase JOIN healthgram.tbl_patient patient On userbase.Username = patient.Username and userbase.User_Status = 'not verified';`})
@@ -66,7 +66,7 @@ export default function Patient(props) {
     }
 
     const getPatientDetails = async () => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT * FROM healthgram.tbl_patient patient JOIN  healthgram.tbl_userbase userbase On userbase.Username = patient.Username;`})
@@ -110,7 +110,7 @@ export default function Patient(props) {
                     icon: () => <VerifiedUserIcon fontSize={'medium'} style={{ color: '#2ecc71' }} />,
                     tooltip: 'Verify',
                     onClick: async (event, rowData) => {
-                        let response= await fetch("http://localhost/healthgram/test.php",{
+                        let response= await fetch("http://localhost:8080/healthgram/test.php",{
                             method:"POST",
                             header:{"Content-Type": "application/json"},
                             body:JSON.stringify({"query":`UPDATE tbl_userbase SET User_Status = 'verified' WHERE tbl_userbase.Username = '${rowData.Username}';`})
@@ -172,7 +172,7 @@ export default function Patient(props) {
                         hidden: rowData.User_Status == 'inactive',
                         onClick: async (event, rowData) => {
                             console.log(rowData.Doc_Id == 1)
-                            let response= await fetch("http://localhost/healthgram/test.php",{
+                            let response= await fetch("http://localhost:8080/healthgram/test.php",{
                                 method:"POST",
                                 header:{"Content-Type": "application/json"},
                                 body:JSON.stringify({"query":`UPDATE tbl_userbase SET User_Status = 'inactive' WHERE tbl_userbase.Username = '${rowData.Username}';`})
@@ -188,7 +188,7 @@ export default function Patient(props) {
                         disabled: rowData.User_Status == 'verified',
                         hidden: rowData.User_Status == 'verified' || rowData.User_Status == 'not verified',
                         onClick: async (event, rowData) => {
-                            let response= await fetch("http://localhost/healthgram/test.php",{
+                            let response= await fetch("http://localhost:8080/healthgram/test.php",{
                                 method:"POST",
                                 header:{"Content-Type": "application/json"},
                                 body:JSON.stringify({"query":`UPDATE tbl_userbase SET User_Status = 'verified' WHERE tbl_userbase.Username = '${rowData.Username}';`})

@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { CopyToClipboard } from "react-copy-to-clipboard"
+import TextField from '@mui/material/TextField';
+import MaterialTable from 'material-table';
 import Button from "@material-ui/core/Button"
 import EventIcon from '@mui/icons-material/Event';
 import ConsultationImg from '../../assets/images/upcomming-booking.svg'
@@ -11,7 +13,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 const PatientPanelWrapper = styled.div`
     /* height: 200vh; */
     /* width: 100vw; */
-    margin-top: 80px;
+    margin-top: 88px;
     padding: 8px;
     display: flex;
     position: relative;
@@ -79,16 +81,23 @@ const ChatLink = styled.div`
     background-color: yellow;
 `;
 
-export function PatientPanel (props) {    
+const BookingHistory = styled.div`
+    width: 100%;
+    margin: 12px;
+    /* background-color: pink; */
+`;
+
+export function PatientPanel (props) {
     document.title = "Patient Panel"
     window.addEventListener("scroll", () => console.log("hello"));
     sessionStorage.removeItem('Refreshed');
     
     const history = useHistory();
     const [consultations, setConsultations] = useState([])
-
+    const [bookingHistory, setBookingHistory] = useState([])
+    
     const checkConsultations = async () => {
-        let response = await fetch("http://localhost/healthgram/test.php", {
+        let response = await fetch("http://localhost:8080/healthgram/test.php", {
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query": `SELECT * FROM tbl_booking JOIN tbl_patient ON tbl_patient.Pat_Id= tbl_booking.Pat_Id WHERE tbl_booking.Pat_Id=(SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}') AND Booking_Status LIKE 'paid';`})
@@ -104,6 +113,17 @@ export function PatientPanel (props) {
         }, 4000);
         return () => clearInterval(interval);
     }, []);
+
+    const getBookingHistory = async () => {
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
+            method:"POST",
+            header:{"Content-Type": "application/json"},
+            body:JSON.stringify({"query":`SELECT * FROM tbl_booking WHERE Pat_Id=(SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}') AND Booking_Status LIKE 'completed';`})
+        });
+        let table = await response.json();
+        console.log(table)
+        setBookingHistory(table);
+    }
 
     return <PatientPanelWrapper>
         <FloatingButton to="/booking">
@@ -128,6 +148,58 @@ export function PatientPanel (props) {
             </ChatLink>}
             </ConsultationTextContainer>
         </ConsultationWrapper>}
-
+        
+        <BookingHistory>
+        <TextField
+          required
+          id="outlined-required"
+          label="Required"
+          defaultValue="Hello World"
+        />
+            <MaterialTable
+                title="Booking History"
+                data={bookingHistory}
+                columns={[
+                    { title: "Booking Id", field: "Booking_Id" },
+                    { title: "Patient Id ", field: "Pat_Id" },
+                    { title: "Doctor Id", field: "Doc_Id" },
+                    { title: "Prescription", field: "Pres_Id" },
+                    { title: "Amount", field: "Booking_Amount" },
+                    { title: "Timestamp", field: "Booking_Date " },
+                    { title: "Status", field: "Booking_Status" },
+                ]}
+                options={{
+                    actionsColumnIndex: 0, addRowPosition: "first",
+                    search: true,                   
+                    exportButton: true
+                }} 
+                actions={[
+                    // rowData => ({
+                    //     icon: () => <VolunteerActivismIcon fontSize={'medium'} />,
+                    //     tooltip: 'Activate User',
+                    //     disabled: rowData.User_Status == 'verified',
+                    //     hidden: rowData.User_Status == 'verified' || rowData.User_Status == 'not verified',
+                    //     onClick: async (event, rowData) => {
+                    //         let response= await fetch("http://localhost:8080/healthgram/test.php",{
+                    //             method:"POST",
+                    //             header:{"Content-Type": "application/json"},
+                    //             body:JSON.stringify({"query":`UPDATE tbl_userbase SET User_Status = 'verified' WHERE tbl_userbase.Username = '${rowData.Username}';`})
+                    //         });
+                    //         let table = await response.json();
+                    //         getUserDetails();
+                    //     }
+                    // }),
+                ]}
+                style={{
+                    height: 'auto',
+                    display: 'flex',
+                    boxShadow: 'rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px',
+                    flexDirection: 'column',
+                    borderRadius: '1rem',    
+                    padding: '0px 20px'
+                    // backgroundColor: 'transparent'
+                }}
+            />
+        </BookingHistory>
     </PatientPanelWrapper>
 }

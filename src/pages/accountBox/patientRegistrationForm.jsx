@@ -111,7 +111,7 @@ export function PatientRegistrationForm (props) {
     }
     
     const onSubmit = async data => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT * FROM tbl_userbase WHERE Username="${data.email}";`})
@@ -122,7 +122,7 @@ export function PatientRegistrationForm (props) {
         if (table.length == 0) {
             setRegisterError('')
 
-            let response= await fetch("http://localhost/healthgram/test.php",{
+            let response= await fetch("http://localhost:8080/healthgram/test.php",{
                 method:"POST",
                 header:{"Content-Type": "application/json"},
                 body:JSON.stringify({"query":`

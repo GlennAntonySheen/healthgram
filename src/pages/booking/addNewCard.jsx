@@ -83,7 +83,7 @@ export default function AddCard(props) {
 
     const addNewCard = async (data, e) => {
 
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT * FROM tbl_card WHERE Card_No LIKE "${data.cardNumber}";`})
@@ -95,7 +95,7 @@ export default function AddCard(props) {
             console.log("card already exist")
             setExpsetErrorText('This Card Already Exists. Try Another One')
         } else {
-            let response= await fetch("http://localhost/healthgram/test.php",{
+            let response= await fetch("http://localhost:8080/healthgram/test.php",{
                 method:"POST",
                 header:{"Content-Type": "application/json"},
                 body:JSON.stringify({"query":`INSERT INTO tbl_card(Card_Id, Pat_Id, Card_No, Card_Name, Card_Exp_Date, Card_Type) VALUES (NULL, ${props.patId}, '${data.cardNumber}', '${data.cardName}', '${data.expiryDate}', '${data.CardType}');`})

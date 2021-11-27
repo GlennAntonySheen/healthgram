@@ -42,7 +42,7 @@ export default function DoctorCategory(props) {
     const [loadForFirstTime, setLoadForFirstTime] = useState(true);
 
     const getSpecializationsDetails = async () => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT * FROM tbl_doctor_category;`})
@@ -69,7 +69,7 @@ export default function DoctorCategory(props) {
                 ]}
                 editable={{
                     onRowAdd:  async (newData) => {
-                        let response= await fetch("http://localhost/healthgram/test.php",{
+                        let response= await fetch("http://localhost:8080/healthgram/test.php",{
                             method:"POST",
                             header:{"Content-Type": "application/json"},
                             body:JSON.stringify({"query":`INSERT INTO tbl_doctor_category (Sp_Id, Sp_Name) VALUES (NULL, '${newData.Sp_Id}');`})

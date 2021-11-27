@@ -421,7 +421,7 @@ export function Booking(props) {
         }
 
         (async () => {
-            let response= await fetch("http://localhost/healthgram/test.php",{
+            let response= await fetch("http://localhost:8080/healthgram/test.php",{
                 method:"POST",
                 header:{"Content-Type": "application/json"},
                 body:JSON.stringify({"query":`SELECT * FROM tbl_card WHERE Pat_Id=${paymentDetails[0].Pat_Id};`})
@@ -469,7 +469,7 @@ export function Booking(props) {
     }));
 
     const searchForDoctor = async (data) => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT tbl_userbase.Username, Doc_Id, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name = '${data.searchQuery}') AND tbl_doctor.Doc_Gender LIKE '${data.gender}' AND Doc_No_Of_Tokens>0 AND tbl_doctor.Doc_Fee BETWEEN ${priceRange[0]} AND ${priceRange[1]};`})
@@ -482,7 +482,7 @@ export function Booking(props) {
     useEffect(() => {
         if (activeStep == 1) {
             const timer = setInterval(async () => {            
-                let response= await fetch("http://localhost/healthgram/test.php",{
+                let response= await fetch("http://localhost:8080/healthgram/test.php",{
                     method:"POST",
                     header:{"Content-Type": "application/json"},
                     body:JSON.stringify({"query":`SELECT * FROM tbl_booking WHERE tbl_booking.Booking_Id = ${bookingDetails[0].Booking_Id };`})
@@ -520,13 +520,13 @@ export function Booking(props) {
         setOpenDialogue(true)
         setProgress(100)
 
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`INSERT INTO tbl_prescription (Pres_Id, Doc_Id, Pres_Date, Prescription) VALUES (NULL, '${doctor.Doc_Id}', NULL, NULL);                 
                 INSERT INTO tbl_booking (Booking_Id, Pat_Id, Doc_Id, Pres_Id, Booking_Amount, Booking_Date, Booking_Status) VALUES (NULL, (SELECT Pat_Id FROM tbl_patient WHERE Username LIKE '${sessionStorage.getItem('Username')}'), '${doctor.Doc_Id}', (SELECT MAX(Pres_Id) FROM tbl_prescription), '${doctor.Doc_Fee}', current_timestamp(), 'not confirmed');`})
         });
-        let bookingid= await fetch("http://localhost/healthgram/test.php",{
+        let bookingid= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":` SELECT * FROM tbl_booking WHERE Booking_Id=(SELECT MAX(Booking_Id) FROM tbl_booking);`})
@@ -541,7 +541,7 @@ export function Booking(props) {
     const cancelBooking = async () => {
         setActiveStep(0)    
 
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`UPDATE tbl_booking SET Booking_Status = 'cancelled' WHERE tbl_booking.Booking_Id = ${bookingDetails[0].Booking_Id };`})
@@ -553,7 +553,7 @@ export function Booking(props) {
     }
     
     const getPaymentDetails = async () => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT Booking_Id, tbl_booking.Pat_Id, tbl_booking.Doc_Id, Pres_Id, Booking_Amount, Booking_Date, Booking_Status, tbl_patient.Username AS Pat_Username, Pat_Name, Pat_Phone_No, Pat_Gender, Sp_Name, tbl_doctor.Username AS Doc_Username, Doc_Name, Doc_Phone_No, Doc_Gender, Doc_Fee FROM tbl_booking JOIN tbl_patient ON tbl_patient.Pat_Id = tbl_booking.Pat_Id JOIN tbl_doctor ON tbl_doctor.Doc_Id=tbl_booking.Doc_Id JOIN tbl_doctor_category on tbl_doctor_category.Sp_Id=tbl_doctor.Sp_Id WHERE tbl_booking.Booking_Id=${bookingDetails[0].Booking_Id}`})
@@ -565,7 +565,7 @@ export function Booking(props) {
     }
     
     const makePayment = async () => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`INSERT INTO tbl_payment(Pay_Id, Card_Id, Pay_Amount, Pay_Status, Booking_Id) VALUES (NULL, (SELECT Card_Id FROM tbl_card WHERE Card_No='${currentCard}'), ${paymentDetails[0].Booking_Amount},'paid', ${paymentDetails[0].Booking_Id});

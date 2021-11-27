@@ -16,3 +16,4 @@
 * ReInitialize fields in addNewCard dialog while closing 
 * 16 years old or more
 * Add responsiveess to consultation page
+* Export table in admin pannel as pdf

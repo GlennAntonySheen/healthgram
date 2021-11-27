@@ -137,7 +137,7 @@ const VideoPlayer = () => {
 	const [bookingDetails, setBookingDetails] = useState([]);
 
 	const getBookingDetails = async () => {
-        let response= await fetch("http://localhost/healthgram/test.php",{
+        let response= await fetch("http://localhost:8080/healthgram/test.php",{
             method:"POST",
             header:{"Content-Type": "application/json"},
             body:JSON.stringify({"query":`SELECT Booking_Id, tbl_booking.Pat_Id, tbl_booking.Doc_Id, tbl_patient.Username AS Pat_Username, Pat_Name, Pat_Phone_No, Pat_Dob, Pat_Gender, Sp_Name, tbl_doctor.Username AS Doc_Username, Doc_Name, Doc_Phone_No, Doc_Gender, tbl_prescription.Pres_Id, Pres_Date, Prescription FROM tbl_booking JOIN tbl_patient ON tbl_patient.Pat_Id = tbl_booking.Pat_Id JOIN tbl_doctor ON tbl_doctor.Doc_Id=tbl_booking.Doc_Id JOIN tbl_doctor_category ON tbl_doctor_category.Sp_Id=tbl_doctor.Sp_Id JOIN tbl_prescription ON tbl_prescription.Pres_Id=tbl_booking.Pres_Id WHERE tbl_booking.Booking_Id=${window.location.href.split('/')[4]}`})
@@ -154,7 +154,7 @@ const VideoPlayer = () => {
 	useEffect(() => {
 		if (sessionStorage.getItem('UserType') == 'doctor') {
 			const interval = setTimeout(async () => {
-				let response= await fetch("http://localhost/healthgram/test.php",{
+				let response= await fetch("http://localhost:8080/healthgram/test.php",{
 					method:"POST",
 					header:{"Content-Type": "application/json"},
 					body:JSON.stringify({"query":`UPDATE tbl_prescription SET Prescription='${prescriptions}' WHERE tbl_prescription.Pres_Id=(SELECT Pres_Id FROM tbl_booking WHERE Booking_Id=${window.location.href.split('/')[4]})`})
@@ -168,7 +168,7 @@ const VideoPlayer = () => {
 	useEffect(() => {
 		if (sessionStorage.getItem('UserType') == 'patient') {
 			const interval = setInterval(async () => {
-				let response= await fetch("http://localhost/healthgram/test.php",{
+				let response= await fetch("http://localhost:8080/healthgram/test.php",{
 					method:"POST",
 					header:{"Content-Type": "application/json"},
 					body:JSON.stringify({"query":`SELECT Prescription FROM tbl_prescription WHERE Pres_Id=(SELECT Pres_Id FROM tbl_booking WHERE Booking_Id=${window.location.href.split('/')[4]})`})
