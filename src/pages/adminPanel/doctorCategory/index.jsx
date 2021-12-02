@@ -69,21 +69,37 @@ export default function DoctorCategory(props) {
                 ]}
                 editable={{
                     onRowAdd:  async (newData) => {
-                        let response= await fetch("http://localhost:8080/healthgram/test.php",{
-                            method:"POST",
-                            header:{"Content-Type": "application/json"},
-                            body:JSON.stringify({"query":`INSERT INTO tbl_doctor_category (Sp_Id, Sp_Name) VALUES (NULL, '${newData.Sp_Id}');`})
-                        });
-                        let table = await response.json();
-                        setSpecializations(table);
-                        getSpecializationsDetails()
+                        let flag = 0;
+                        specializations.forEach(e => {
+                            if (e.Sp_Name == newData.Sp_Id) {
+                                flag = 1;
+                            }
+                        })
+                        if (flag == 1) {
+                            alert('Specialization already exist')
+                            
+                        } else if (flag == 0) {
+                            console.log('can be added')
+
+                            let response= await fetch("http://localhost:8080/healthgram/test.php",{
+                                method:"POST",
+                                header:{"Content-Type": "application/json"},
+                                body:JSON.stringify({"query":`INSERT INTO tbl_doctor_category (Sp_Id, Sp_Name) VALUES (NULL, '${newData.Sp_Id}');`})
+                            });
+                            let table = await response.json();
+                            setSpecializations(table);
+                            getSpecializationsDetails()
+                        }
                     }
                 }}
                 options={{
                     actionsColumnIndex: 0, addRowPosition: "first",
                     pageSizeOptions: [5, 8, 10],
-                    pageSize: 8,
-                    exportButton: true
+                    pageSize: 8,  
+                    exportButton: {
+                        csv: true,
+                        pdf: false
+                    }
                 }} 
                 style={{
                     height: 'auto',

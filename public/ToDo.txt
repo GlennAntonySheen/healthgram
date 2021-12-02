@@ -14,6 +14,7 @@
 * Datewise filter in admin panel
 * Add place holder to field in addNewCard dialog
 * ReInitialize fields in addNewCard dialog while closing 
-* 16 years old or more
+* Report generation
 * Add responsiveess to consultation page
-* Export table in admin pannel as pdf
+* Hide inactive doctors from booking and viewing in all doctors
+* Add filter in booking table of admin pannel

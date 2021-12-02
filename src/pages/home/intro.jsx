@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import Img from '../../assets/images/home/Drawkit-Vector-Illustration-Medical-17.svg'
 
-import TextField from '@mui/material/TextField';
-
 const IntroContainer = styled.div`
     height: 100%;
     width: 100%;
@@ -50,13 +48,6 @@ export function Intro (props) {
         
         <BackgroundImg><img src={Img} /></BackgroundImg>
         <TextContainer>
-    <TextField
-      required
-      id="outlined-required"
-      label="Required"
-      defaultValue="Hello World"
-      size="medium"
-    />
             <MainHeading>👨‍⚕️Hi There</MainHeading>
             <Description>HealthGram is an analatical tool that helps you <br/>to track your medical history.</Description>
         </TextContainer>

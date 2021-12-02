@@ -435,10 +435,6 @@ export function DoctorRegistrationForm (props) {
                         fullWidth="true"
                         size="small"
                         style={fieldStyles}
-                        {...register("confirmPassword", { 
-                            required: "Please re-enter Password",
-                            validate: value => value === getValues('password') || "The passwords do not match"
-                        })}
                     />
                     {errors.confirmPassword && <ErrorText>{errors.confirmPassword.message}</ErrorText>}
                 </FormPage>

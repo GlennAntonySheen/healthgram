@@ -5,6 +5,7 @@ import { AccountBox } from './pages/accountBox';
 import { AdminPanel } from './pages/adminPanel';
 import { DoctorPanel } from './pages/doctorPanel';
 import { PatientPanel } from './pages/patientPanel';
+import { AllDoctors } from './pages/patientPanel/allDoctors.jsx';
 import { Booking } from './pages/booking';
 import { Consultation } from './pages/consultation';
 import TextField from '@mui/material/TextField';
@@ -38,6 +39,10 @@ function App() {
 				<Route exact path="/patient">
 					<Navbar textColor={'white'} opaque={true} type={'patient'}/>
 					<PatientPanel />
+				</Route>
+				<Route exact path="/allDoctors">
+					<Navbar textColor={'white'} opaque={true} type={'patient'}/>
+					<AllDoctors />
 				</Route>
 				<Route exact path="/booking">
 					<Navbar textColor={'white'} type={'patient'} />

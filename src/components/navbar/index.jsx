@@ -152,7 +152,7 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                 <h1>HealthGram</h1>
             </LogoWrapper>
         </LeftSection>
-        <MiddleSection> 
+        <MiddleSection onClick={() => history.push(`./${sessionStorage.getItem('UserType')}`)}> 
             {(props.type != 'home') && <Accessibility>
                 <Chip
                     avatar={<Avatar alt="D" src={docProfilePic} />}
@@ -169,7 +169,14 @@ return <Wrapper scroll={scroll} opaque={props.opaque}>
                 <AccessibilityItem to="/login" scroll={scroll} opaque={props.opaque}><h2>Log In</h2><h3><LoginIcon /></h3></AccessibilityItem>
             </Accessibility> }
             {(props.type == 'patient') && <Accessibility>     
-                <AccessibilityItem to="/booking" scroll={scroll} opaque={props.opaque}><h2>Book</h2><h3>a Doctor</h3></AccessibilityItem>
+                {/* <AccessibilityItem to="/booking" scroll={scroll} opaque={props.opaque}><h2>Book</h2><h3>a Doctor</h3></AccessibilityItem> */}
+                <AccessibilityItem 
+                    to="/allDoctors" 
+                    scroll={scroll} 
+                    opaque={props.opaque}
+                >
+                    <h2>Browse</h2><h3>All Doctors</h3>
+                </AccessibilityItem>
                 <AccessibilityItem 
                     to="/home" 
                     scroll={scroll} 

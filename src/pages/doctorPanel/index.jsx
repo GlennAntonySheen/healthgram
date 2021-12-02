@@ -86,7 +86,7 @@ const TokenContainer = styled.div`
 const BookingRequests = styled.div`
     height: fit-content;
     width: fit-content;
-    margin: 20px;
+    margin: 10px;
     border-radius: 1rem;
     
     /* background-color: yellow; */
@@ -94,7 +94,7 @@ const BookingRequests = styled.div`
 
 const RequestContainer = styled.div`
     height: fit-content;
-    width: 900px;
+    width: fit-content;
     margin-bottom: 20px;
     padding: 10px;
     display: flex;
@@ -134,7 +134,7 @@ const RequestText = styled.div`
 const RequestControls = styled.div`
     height: 100%;
     width: fit-content;
-    margin-left: 160px;
+    margin-left: 90px;
     /* right: 10px; */
     display: flex;
     /* flex: 1; */
@@ -270,10 +270,10 @@ export function DoctorPanel (props) {
                             sx={{ width: '80px' }}
                             inputProps={{ 
                                 type: 'number',
-                                min: 1
+                                min: 1,
                             }}
                             InputLabelProps={{
-                            shrink: true,
+                                shrink: true,
                             }}
                             onChange={(event) => setNoOfTokens(event.target.value)}
                         />
@@ -296,7 +296,7 @@ export function DoctorPanel (props) {
             </IsConsulting>
             <TokenContainer>
                 <span>Number Of Tokens</span>
-                <p>{tokens[0].Doc_No_Of_Tokens}</p>
+                <p>{tokens[0]?.Doc_No_Of_Tokens }</p>
             </TokenContainer>
         </CardsWrapper>        
         

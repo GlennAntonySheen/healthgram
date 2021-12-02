@@ -4,6 +4,9 @@ import { SocketContext } from '../Context';
 import LogoImg from '../../../assets/logo/Technology to Customize Your Design _ GraphicSprings - Brave 20-Jun-21 11_44_14 AM.png';
 import TextField from '@mui/material/TextField';
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import IconButton from '@mui/material/IconButton';
+import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOfflineOutlined';
 
 const Wrapper = styled.div`
 	height: 89vh;
@@ -135,6 +138,7 @@ const Details = styled.div`
 const VideoPlayer = () => {
 	const { name, callAccepted, myVideo, userVideo, callEnded, stream, call, prescriptions, setPrescriptions, showPrescriptions, setShowPrescriptions } = useContext(SocketContext);
 	const [bookingDetails, setBookingDetails] = useState([]);
+	const [img, setimg] = useState(null);
 
 	const getBookingDetails = async () => {
         let response= await fetch("http://localhost:8080/healthgram/test.php",{
@@ -196,6 +200,20 @@ const VideoPlayer = () => {
 		//   });
 	}
 
+	function printDocument() {
+		const input = document.getElementById('pres');
+		html2canvas(input)
+		  .then((canvas) => {
+			const imgData = canvas.toDataURL('image/jpg');
+			const pdf = new jsPDF();
+			setimg(imgData);
+			pdf.addImage(imgData, 'JPEG', 0, 0);
+			// pdf.output('dataurlnewwindow');
+			pdf.save("download.pdf");
+		  })
+		;
+	  }
+
 	return (
 		<Wrapper>
 			<VideoWrapper showPrescriptions={showPrescriptions}>
@@ -211,16 +229,19 @@ const VideoPlayer = () => {
 				)}
 			</VideoWrapper>
 			{showPrescriptions && ( <Prescription id="pres">
+				{/* <img src={img} alt="Prescription" /> */}
 				<PrescriptionHeader>						
 					<LogoWrapper>
 						<img src={LogoImg} alt=""/>
 						<h1>PRESCRIPTIONS</h1>
 					</LogoWrapper>
 					<BookingDetailsContainer>
+						<IconButton aria-label="delete">
+							<DownloadForOfflineOutlinedIcon onClick={printDocument}/>
+						</IconButton>
 						<span>{`Booking ID: ${bookingDetails[0].Booking_Id}`}</span>			
 						<span>{`Prescription ID: ${bookingDetails[0].Pres_Id}`}</span>						
 						<span>{`Time: ${bookingDetails[0].Pres_Date.substr(0, 16)}`}</span>
-
 					</BookingDetailsContainer>
 				</PrescriptionHeader>
 				<DetailsWrapper>

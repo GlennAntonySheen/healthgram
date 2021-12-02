@@ -164,8 +164,11 @@ export default function Doctor(props) {
                 ]}
                 options={{
                     actionsColumnIndex: 0, addRowPosition: "first",
-                    search: true,
-                    exportButton: true
+                    search: true,  
+                    exportButton: {
+                        csv: true,
+                        pdf: false
+                    }
                 }} 
                 editable={{                    
                     isEditable: row=> row.Doc_Id==1
@@ -191,7 +194,7 @@ export default function Doctor(props) {
                         icon: () => <VolunteerActivismIcon fontSize={'medium'} />,
                         tooltip: 'Activate User',
                         disabled: rowData.User_Status == 'verified',
-                        hidden: rowData.User_Status == 'verified',
+                        hidden: rowData.User_Status == 'verified' || rowData.User_Status == 'not verified',
                         onClick: async (event, rowData) => {
                             let response= await fetch("http://localhost:8080/healthgram/test.php",{
                                 method:"POST",

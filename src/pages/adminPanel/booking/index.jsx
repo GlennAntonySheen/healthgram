@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useForm } from 'react-hook-form';
 import MaterialTable from 'material-table';
 import { Doughnut } from 'react-chartjs-2';
 import TextField from '@mui/material/TextField';
@@ -10,6 +11,7 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import IconButton from '@mui/material/IconButton';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { TablePagination, Grid, Typography, Divider } from '@material-ui/core'
 
 const ContentWrapper = styled.div`
 width: 100%;
@@ -48,10 +50,10 @@ const CardsWrapper = styled.div`
 `;
 
 const UsersStat = styled.div`
-    height: 240px;
+    height: 250px;
     width: 380px;
     /* margin: 8px; */
-    padding:30px;
+    padding:25px;
     display: flex;
     flex-direction: column;
     border-radius: 1rem;
@@ -127,6 +129,13 @@ export default function Booking(props) {
     const [fromDate, setFromDate] = React.useState('');
     const [toDate, setToDate] = React.useState(new Date().toISOString().substr(0, 10) + ' 11:59:59');
     const [statusCount, setStatusCount] = useState({})
+    const { 
+        watch, 
+        register, 
+        
+        handleSubmit,
+        formState: { errors, isValid }
+    } = useForm({ mode: "all" });   
 
     const getBookingDetails = async () => {
         let response = await fetch("http://localhost:8080/healthgram/test.php", {
@@ -147,7 +156,6 @@ export default function Booking(props) {
         table.forEach((e) => {
             if (e.Booking_Date < small) {
                 small = e.Booking_Date;
-                console.log('small is ', small)
             }
         })
         setFromDate(small.substr(0, 10) + ' 00:00:00');
@@ -161,6 +169,7 @@ export default function Booking(props) {
     return <ContentWrapper isActive={props.isActive}>
         <CardsWrapper>
             <UsersStat>
+                <DateRangeHeading>Current Booking Status</DateRangeHeading> 
                 <Doughnut 
                     data={{
                         labels: [
@@ -222,38 +231,46 @@ export default function Booking(props) {
                 </DateRangeHeading> 
                 <DateRangeContainer>
                     <TextField 
+                        name="from"
                         label="From: yyyy-mm-dd hh:mm:ss" 
                         variant="outlined"   
                         fullWidth
 						focused  
-                        color="primary"
-                        value={fromDate}   
-                        onChange={(newValue) => {
-                            setFromDate(newValue.target.value);
-                        }}           
+                        color="primary"                        
+                        error={!!errors.from}
+                        helperText={!!errors.from ? errors.from.message : ''}
+                        value={fromDate}    
                         inputProps={{
                             style: {
                                 width: '100%',
                                 padding: 15
                             }
                         }}
+                        {...register("from", { 
+                            onChange: (e) => setFromDate(e.target.value),
+                            validate: value => value < toDate || "Starting Date Must Come Before Ending Date"
+                        })}
                     />
                     
                     <TextField 
+                        name="to"
                         label="To: yyyy-mm-dd hh:mm:ss"   
                         variant="outlined" 
                         fullWidth
 						focused  
                         color="primary"
-                        value={toDate}   
-                        onChange={(newValue) => {
-                            setToDate(newValue.target.value);
-                        }}       
+                        error={!!errors.to}
+                        helperText={!!errors.to ? errors.to.message : ''}
+                        value={toDate}       
                         inputProps={{
                             style: {
                                 padding: 15,
                             }
                         }}
+                        {...register("to", { 
+                            onChange: (e) => setToDate(e.target.value),
+                            validate: value => value > fromDate || "Ending Date Must Come After Starting Date"
+                        })}
                     />
                 </DateRangeContainer>
                 <ChipContainer>
@@ -302,7 +319,7 @@ export default function Booking(props) {
                     { title: "Booking Id", field: "Booking_Id", validate:   rowData => rowData.Booking_Id == 1},
                     { title: "Patient Id ", field: "Pat_Id" },
                     { title: "Doctor Id", field: "Doc_Id" },
-                    { title: "Prescription", field: "Pres_Id" },
+                    { title: "Prescription Id", field: "Pres_Id" },
                     { title: "Amount", field: "Booking_Amount" },
                     { title: "Time", field: "Booking_Date", validate: rowData => rowData.Booking_Date <= '2021-10-08' },
                     { title: "Status", field: "Booking_Status" },
@@ -313,26 +330,18 @@ export default function Booking(props) {
                     pageSizeOptions: [5, 25, 50, 100, 200, 300],     
                     exportButton: {
                       csv: true,
-                      pdf: true
+                      pdf: false
                     },
                 }} 
-                actions={[
-                    // rowData => ({
-                    //     icon: () => <VolunteerActivismIcon fontSize={'medium'} />,
-                    //     tooltip: 'Activate User',
-                    //     disabled: rowData.User_Status == 'verified',
-                    //     hidden: rowData.User_Status == 'verified' || rowData.User_Status == 'not verified',
-                    //     onClick: async (event, rowData) => {
-                    //         let response= await fetch("http://localhost:8080/healthgram/test.php",{
-                    //             method:"POST",
-                    //             header:{"Content-Type": "application/json"},
-                    //             body:JSON.stringify({"query":`UPDATE tbl_userbase SET User_Status = 'verified' WHERE tbl_userbase.Username = '${rowData.Username}';`})
-                    //         });
-                    //         let table = await response.json();
-                    //         getUserDetails();
-                    //     }
-                    // }),
-                ]}
+                components={{
+                    Pagination: (props) => <>
+                        <Grid container style={{ padding:15}}>
+                            <Grid sm={6} item><Typography variant="subtitle2">Total Number of Booking :  {props.count}</Typography></Grid>
+                        </Grid>
+                        <Divider/>
+                        <TablePagination {...props} />
+                    </>
+                }}
                 style={{
                     height: 'auto',
                     display: 'flex',

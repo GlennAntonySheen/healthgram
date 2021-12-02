@@ -285,13 +285,13 @@ export default function SideBar (props) {
                 </a>
                 <div>Booking</div>
             </Nav>
-            <Nav isActive={props.isActive}>
+            {/* <Nav isActive={props.isActive}>
                 <a href="#">
                     <i class='bx bx-cog' ></i>
                     <span>Settings</span>
                 </a>
                 <div>Settings</div>
-            </Nav>
+            </Nav> */}
         </NavList>
         <ProfileContent>
             <Profile isActive={props.active}>

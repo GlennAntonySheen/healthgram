@@ -158,8 +158,11 @@ export default function Patient(props) {
                 ]}
                 options={{
                     actionsColumnIndex: 0, addRowPosition: "first",
-                    search: true,
-                    exportButton: true
+                    search: true,  
+                    exportButton: {
+                        csv: true,
+                        pdf: false
+                    }
                 }} 
                 editable={{                    
                     isEditable: row=> row.Doc_Id==1

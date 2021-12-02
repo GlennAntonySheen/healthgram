@@ -287,6 +287,7 @@ const PayBackgroungImage = styled.img`
 `;
 
 const PamentDetails = styled.div`
+    /* height: 300px; */
     width: 560px;
     display: flex;
     /* flex: 1; */
@@ -475,7 +476,13 @@ export function Booking(props) {
             body:JSON.stringify({"query":`SELECT tbl_userbase.Username, Doc_Id, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name = '${data.searchQuery}') AND tbl_doctor.Doc_Gender LIKE '${data.gender}' AND Doc_No_Of_Tokens>0 AND tbl_doctor.Doc_Fee BETWEEN ${priceRange[0]} AND ${priceRange[1]};`})
         });
         let table = await response.json();
-        console.log(`SELECT tbl_userbase.Username, Doc_Id, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name = '${data.searchQuery}') AND tbl_doctor.Doc_Gender LIKE '${data.gender}' AND Doc_No_Of_Tokens>0 AND tbl_doctor.Doc_Fee BETWEEN ${priceRange[0]} AND ${priceRange[1]};`);
+        console.log(table)
+        
+
+        // console.log(`SELECT DISTINCT tbl_userbase.Username, Doc_Id, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name  FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name = '${data.searchQuery}') AND tbl_doctor.Doc_Gender LIKE '${data.gender}' AND tbl_doctor.Doc_Fee BETWEEN ${priceRange[0]} AND ${priceRange[1]};`);
+
+
+        // original -  console.log(`SELECT tbl_userbase.Username, Doc_Id, Doc_Pic, Doc_Description, Doc_Fee, Doc_Gender, Doc_Name, Doc_No_Of_Tokens, Doc_Dob, Sp_Name FROM tbl_login JOIN tbl_userbase ON tbl_login.Username=tbl_userbase.Username JOIN tbl_doctor ON tbl_login.Username=tbl_doctor.Username JOIN tbl_doctor_category ON tbl_doctor.Sp_Id=tbl_doctor_category.Sp_Id WHERE User_Type='doctor' AND logout_time is NULL AND (tbl_doctor.Doc_Name LIKE '%${data.searchQuery}%' OR tbl_doctor_category.Sp_Name = '${data.searchQuery}') AND tbl_doctor.Doc_Gender LIKE '${data.gender}' AND Doc_No_Of_Tokens>0 AND tbl_doctor.Doc_Fee BETWEEN ${priceRange[0]} AND ${priceRange[1]};`);
         setDoctors(table)
     }
 
@@ -608,7 +615,7 @@ export function Booking(props) {
             </IntroTextContainer>
         </IntroContainer>
         <BookingSection>
-            <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />} style={{padding: '60px 270px', scale: '1.1'}}>
+            <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />} style={{padding: '60px 220px', scale: '1.1'}}>
                 <Step>
                     <StepLabel>Find Doctor</StepLabel>
                 </Step>
@@ -696,8 +703,9 @@ export function Booking(props) {
                     </Searchbar>
                 </SearchContainer>
                 <SearchResults>
-                    { doctors.map((doctor, index) =>                         
-                        <Card>
+                    { doctors.map((doctor, index) => {
+                        // console.log(doctor.Doc_No_Of_Tokens)
+                        return <Card> 
                             <ProfilePicture><img src={doctor.Doc_Pic || DefaultDoctorProfilePicture} /></ProfilePicture>
                             <CardTextContainer>
                                 <DoctorName>{`Dr. ${doctor.Doc_Name.toUpperCase()}`}</DoctorName>
@@ -709,6 +717,7 @@ export function Booking(props) {
                                 <DoctorDescription>{doctor.Doc_Description}</DoctorDescription>
                                 <DoctorBook>
                                     <code>{`₹${doctor.Doc_Fee}`}</code>
+                                    {/* {(doctor.logout_time == null && doctor.Doc_No_Of_Tokens > 0) &&  */}
                                     <Button 
                                         variant="contained" 
                                         startIcon={<FavoriteBorderIcon />} 
@@ -717,7 +726,7 @@ export function Booking(props) {
                                 </DoctorBook>
                             </CardTextContainer> 
                         </Card>
-                    )}
+                    })}
                 </SearchResults>
             </> }
             <Dialog open={openDialogue}>
@@ -803,7 +812,7 @@ export function Booking(props) {
                                 margin='normal'
                                 InputProps={{ readOnly: true, }}
                                 variant="outlined"
-                                sx={{m: '100px'}}
+                                // sx={{m: '100px'}}
                             />
                             <TextField
                                 label="Email ID"
@@ -812,7 +821,7 @@ export function Booking(props) {
                                 size="small"
                                 margin='normal'
                                 InputProps={{ readOnly: true, }}
-                                sx={{mb: 10}}
+                                // sx={{mb: 10}}
                             />
                             <TextField
                                 label="Gender"
@@ -821,7 +830,7 @@ export function Booking(props) {
                                 size="small"
                                 margin='normal'
                                 InputProps={{ readOnly: true, }}
-                                sx={{mb: 10}}
+                                // sx={{mb: 10}}
                             />
                             <TextField
                                 label="Specializaation"
@@ -830,7 +839,7 @@ export function Booking(props) {
                                 size="small"
                                 margin='normal'
                                 InputProps={{ readOnly: true, }}
-                                sx={{mb: 10}}
+                                // sx={{mb: 10}}
                             />
                         </UserSummary>                        
                         <UserSummary>

@@ -142,8 +142,11 @@ export default function Userbase (props) {
                 ]}
                 options={{
                     actionsColumnIndex: 0, addRowPosition: "first",
-                    search: true,                   
-                    exportButton: true
+                    search: true,        
+                    exportButton: {
+                        csv: true,
+                        pdf: false
+                    }
                 }} 
                 actions={[
                     rowData => ({
