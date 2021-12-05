@@ -1,5 +1,6 @@
 import React, { useState, useRef,useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 import { TextField } from "@material-ui/core";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -33,6 +34,7 @@ export function DoctorRegistrationForm (props) {
     const [profilePictureDataURL, setProfilePictureDataURL] = useState(null);
 
     const reader = new FileReader();
+    const history = useHistory();
 
     const fieldStyles = {
         marginTop: '15px'
@@ -104,6 +106,7 @@ export function DoctorRegistrationForm (props) {
                 document.getElementById('Page4').style.left = "-450px";
                 document.getElementById('Page5').style.left = "0px";
             } else if (page == 5 && isValid ) {
+                console.log('Receiving call')
                 handleSubmit(onSubmit)();
             }
         }
@@ -168,6 +171,7 @@ export function DoctorRegistrationForm (props) {
 
             if (userbaseTable.length == 0) {
                 alert('Your have Registered successfully. \nPlease be patient enough till we send you a confirmation letter within 1 - 2 days.');
+                history.push('./home');
             }
         } else {
             setRegisterError('This User Account Already Exist')
@@ -435,6 +439,10 @@ export function DoctorRegistrationForm (props) {
                         fullWidth="true"
                         size="small"
                         style={fieldStyles}
+                        {...register("confirmPassword", { 
+                            required: "Please re-enter Password",
+                            validate: value => value === getValues('password') || "The passwords do not match"
+                        })}
                     />
                     {errors.confirmPassword && <ErrorText>{errors.confirmPassword.message}</ErrorText>}
                 </FormPage>
@@ -495,7 +503,7 @@ export function DoctorRegistrationForm (props) {
         </FormContainer>
         <Button id="NextBtn" onMouseEnter={nextBtnHover} onClick={nextBtnClick} value="Next" disable={btnDisable}>{buttonText}</Button> 
         <ErrorText>{registerError}</ErrorText>
-        {/* <button onClick = {getSpId }>dfbnd</button> */}
-        {/* <pre>{JSON.stringify(watch(), null, 2)}</pre>  */}
+        <button onClick = {() => console.log(errors) }>dfbnd</button>
+        <pre>{JSON.stringify(watch(), null, 2)}</pre> 
     </>
 }

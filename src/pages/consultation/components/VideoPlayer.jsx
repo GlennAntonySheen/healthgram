@@ -34,17 +34,30 @@ const Canvas = styled.div`
     height: ${ props => props.showPrescriptions ? '40%' : 'fit-content'}; 
     width: ${ props => props.showPrescriptions ? '70%' : 'fit-content'};;
 	display: flex;
+	/* flex-direction: column; */
 	align-items: center;
 	margin: 30px;
 	overflow: hidden;
 	border-radius: 1rem;
 	background-color: transparent;
+	/* background-color: red; */
     box-shadow: 0 4px 14px 0 rgb(0 118 255 / 39%);
 
     video {
         height: 150%;
 		width: 100%;
+        /* height: 150%;
+		width: 100%; */
+		border-radius: 1rem;
     }
+
+	span {
+		position: absolute;	
+		transform: translate(${ props => props.showPrescriptions ? '20px' : '20px'}, ${ props => props.showPrescriptions ? '150px' : '260px'});
+		/* transform: translate(20px, 260px); */
+		font-size: 1.5rem;
+		color: #1976d2;
+	}
 `;
 
 const Prescription = styled.div`
@@ -184,22 +197,6 @@ const VideoPlayer = () => {
 		}
 	}, [])
 
-	const generatePDF = () => {
-		// const pdf = new jsPDF('p', 'pt', 'a4');
-		// pdf.html(document.querySelector('#pres'), {
-		// 	callback: function (pdf) {
-		// 		pdf.save('Prescription.pdf');
-		// 	}
-		// })
-
-		// html2canvas(element, {
-		// 	onrendered: function (canvas) {
-		// 	  $("#previewImage").append(canvas);
-		// 	  getCanvas = canvas;
-		// 	}
-		//   });
-	}
-
 	function printDocument() {
 		const input = document.getElementById('pres');
 		html2canvas(input)
@@ -212,19 +209,22 @@ const VideoPlayer = () => {
 			pdf.save("download.pdf");
 		  })
 		;
-	  }
+	}
 
 	return (
 		<Wrapper>
 			<VideoWrapper showPrescriptions={showPrescriptions}>
 				{stream && (
 					<Canvas showPrescriptions={showPrescriptions}>
-						<video playsInline muted ref={myVideo} autoPlay />
+						
+						<video playsInline muted ref={myVideo} autoPlay ></video>
+						<span>{sessionStorage.getItem('UserType') == 'doctor' ? `🩺You: Dr.${bookingDetails[0]?.Doc_Name}` : `😷You: ${bookingDetails[0]?.Pat_Name}`}</span>
 					</Canvas>
 				)}
 				{callAccepted && !callEnded && (
 					<Canvas showPrescriptions={showPrescriptions}>
 						<video playsInline ref={userVideo} autoPlay />
+						<span>{sessionStorage.getItem('UserType') == 'doctor' ? `😷${bookingDetails[0]?.Pat_Name}` : `🩺Dr.${bookingDetails[0]?.Doc_Name}`}</span>
 					</Canvas>
 				)}
 			</VideoWrapper>
@@ -241,7 +241,7 @@ const VideoPlayer = () => {
 						</IconButton>
 						<span>{`Booking ID: ${bookingDetails[0].Booking_Id}`}</span>			
 						<span>{`Prescription ID: ${bookingDetails[0].Pres_Id}`}</span>						
-						<span>{`Time: ${bookingDetails[0].Pres_Date.substr(0, 16)}`}</span>
+						<span>{`Time: ${bookingDetails[0].Pres_Date?.substr(0, 16)}`}</span>
 					</BookingDetailsContainer>
 				</PrescriptionHeader>
 				<DetailsWrapper>
@@ -274,7 +274,7 @@ const VideoPlayer = () => {
 						setPrescriptions(event.target.value)
 					}}
 				/>
-				{/* <button onClick={ () => generatePDF()}>Get Booking Details</button> */}
+				{/* <button onClick={ () => console.log(bookingDetails[0].Doc_Name)}>Get Booking Details</button> */}
 			</Prescription> )}
 		</Wrapper>
 	);

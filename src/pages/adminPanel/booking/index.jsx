@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
+import { Link, Route, Redirect } from 'react-router-dom';
+import { Report } from '../../../components/reports/doctorReport';
+import { useHistory } from 'react-router-dom';
 import MaterialTable from 'material-table';
 import { Doughnut } from 'react-chartjs-2';
 import TextField from '@mui/material/TextField';
@@ -12,6 +15,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import IconButton from '@mui/material/IconButton';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { TablePagination, Grid, Typography, Divider } from '@material-ui/core'
+import SummarizeIcon from '@mui/icons-material/Summarize';
 
 const ContentWrapper = styled.div`
 width: 100%;
@@ -122,6 +126,20 @@ const BookingTable = styled.div`
     margin-top: 18px;
 `;
 
+const ReportWrapper = styled(Link)`
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: .99rem;
+    padding: 2rem;
+    color: #006DB6;
+    text-decoration: none;
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 9px 24px rgb(0 0 0 / 12%), 0 9px 24px rgb(0 0 0 / 12%);
+`;
+
 export default function Booking(props) {
     const [selectedDate, handleDateChange] = useState(new Date());
     const [bookingDetails, setBookingDetails] = useState([])
@@ -132,10 +150,11 @@ export default function Booking(props) {
     const { 
         watch, 
         register, 
-        
+        getValues,        
         handleSubmit,
         formState: { errors, isValid }
     } = useForm({ mode: "all" });   
+    const history = useHistory();
 
     const getBookingDetails = async () => {
         let response = await fetch("http://localhost:8080/healthgram/test.php", {
@@ -309,8 +328,13 @@ export default function Booking(props) {
                     
                 </ChipContainer>
             </DateRangePicker>
+            <ReportWrapper
+                to={`/bookingReport/${fromDate}/${toDate}`}
+            >
+                <SummarizeIcon />
+                <DateRangeHeading>Generate Booking Report</DateRangeHeading>
+            </ReportWrapper>
         </CardsWrapper>
-
         <BookingTable>
             <MaterialTable
                 title="Booking Details"

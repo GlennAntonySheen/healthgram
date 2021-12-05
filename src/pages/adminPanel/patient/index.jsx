@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import MaterialTable from 'material-table';
 import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
 import CachedIcon from '@material-ui/icons/Cached';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 
 const ContentWrapper = styled.div`
     width: 100%;
@@ -52,6 +54,7 @@ export default function Patient(props) {
     const [notVerifiedPatients, setNotVerifiedPatients] = useState([]);
     const [patientDetails, setPatientDetails] = useState([]);
     const [loadForFirstTime, setLoadForFirstTime] = useState(true);
+    const history = useHistory();
 
 
     const getUnverifiedPatients = async () => {
@@ -200,6 +203,14 @@ export default function Patient(props) {
                             getPatientDetails();
                         }
                     }),
+                ],
+                [
+                    {
+                      icon: () => <SummarizeIcon />,
+                      tooltip: 'Generate Patient Report',
+                      isFreeAction: true,
+                      onClick: (event) => history.push('/patientReport')
+                    }
                 ]}
                 detailPanel={rowData => {
                     return (

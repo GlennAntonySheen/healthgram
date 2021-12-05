@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import MaterialTable from 'material-table';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import CachedIcon from '@material-ui/icons/Cached';
 import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 
 const ContentWrapper = styled.div`
     width: 100%;
@@ -52,6 +54,7 @@ export default function Doctor(props) {
     const [notVerifiedDoctors, setNotVerifiedDoctors] = useState([]);
     const [doctorDetails, setDoctorDetails] = useState([]);
     const [loadForFirstTime, setLoadForFirstTime] = useState(true);
+    const history = useHistory();
 
 
     const getUnverifiedDoctors = async () => {
@@ -205,6 +208,14 @@ export default function Doctor(props) {
                             getDoctorDetails();
                         }
                     }),
+                ],
+                [
+                    {
+                      icon: () => <SummarizeIcon />,
+                      tooltip: 'Generate Doctor Report',
+                      isFreeAction: true,
+                      onClick: (event) => history.push('/doctorReport')
+                    }
                 ]}
                 detailPanel={rowData => {
                     console.log('rowData is: ', doctorDetails);

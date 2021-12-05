@@ -8,7 +8,9 @@ import { PatientPanel } from './pages/patientPanel';
 import { AllDoctors } from './pages/patientPanel/allDoctors.jsx';
 import { Booking } from './pages/booking';
 import { Consultation } from './pages/consultation';
-import TextField from '@mui/material/TextField';
+import { BookingReport } from './components/reports/bookingReport';
+import { PatientReport } from './components/reports/patientReport';
+import { DoctorReport } from './components/reports/doctorReport';
 
 function App() {
 	return (<>
@@ -50,6 +52,15 @@ function App() {
 				</Route>
 				<Route exact path="/consultation/:bookidorvideolink">
 					<Consultation />
+				</Route>
+				<Route exact path="/doctorReport">
+					<DoctorReport />
+				</Route>
+				<Route exact path="/patientReport">
+					<PatientReport />
+				</Route>
+				<Route exact path="/bookingReport/:fromDate/:toDate">
+					<BookingReport />
 				</Route>
 			</Switch>
 		</Router>
